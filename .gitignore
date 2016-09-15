@@ -1,0 +1,41 @@
+# From: https://github.com/github/gitignore/blob/master/Android.gitignore
+# At: 15/09/16
+
+# Built application files
+*.apk
+*.ap_
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+SDaaS/bin/
+SDaaS/gen/
+SDaaS/out/
+
+# Gradle files
+SDaaS/.gradle/
+SDaaS/build/
+
+# Local configuration file (sdk path, etc)
+SDaaS/local.properties
+
+# Log Files
+*.log
+
+# Android Studio Navigation editor temp files
+SDaaS/.navigation/
+
+# Android Studio captures folder
+SDaaS/captures/
+
+# Intellij
+*.iml
+SDaaS/.idea/workspace.xml
+SDaaS/.idea/libraries
+
+# Keystore files
+*.jks

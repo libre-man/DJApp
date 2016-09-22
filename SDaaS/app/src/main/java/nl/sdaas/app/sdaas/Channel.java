@@ -5,15 +5,13 @@ package nl.sdaas.app.sdaas;
  */
 
 public class Channel {
-    private Color color;
-    private int channel_id;
-    private String channel_url;
+    private int color;
+    private int channelId;
+    private String channelUrl;
 
-    public static enum Color {MAGENTA, CYAN, YELLOW, GREEN};
-
-    public Channel(Color color, int channel_id, String channel_url) {
+    public Channel(int color, int channel_id, String channel_url) {
         this.color = color;
-        this.channel_id = channel_id;
-        this.channel_url = channel_url;
+        this.channelId = channel_id;
+        this.channelUrl = channel_url;
     }
 }

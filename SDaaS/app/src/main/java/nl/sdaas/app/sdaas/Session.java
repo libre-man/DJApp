@@ -15,7 +15,7 @@ public class Session {
         this.channels = new ArrayList<Channel>();
     }
 
-    public void addChannel(Channel.Color color, int channel_id, String channel_url) {
-        channels.add(new Channel(color, channel_id, channel_url));
+    public void addChannel(int color, int channelId, String channelUrl) {
+        channels.add(new Channel(color, channelId, channelUrl));
     }
 }

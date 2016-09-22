@@ -12,14 +12,14 @@ public class Session {
 
     public Session(String name) {
         this.name = name;
-        this.channels = new ArrayList<Channel>();
+        this.channels = new ArrayList<>();
     }
 
     public void addChannel(int color, int channelId, String channelUrl) {
         channels.add(new Channel(color, channelId, channelUrl));
     }
 
-    public String getName()                 { return this.name; }
-    public int numOfChannels()              { return this.channels.size(); }
-    public Channel getChannel(int index)    { return this.channels.get(index); }
+    public String getName() { return this.name; }
+    public int amountOfChannels() { return this.channels.size(); }
+    public Channel getChannel(int index) { return this.channels.get(index); }
 }

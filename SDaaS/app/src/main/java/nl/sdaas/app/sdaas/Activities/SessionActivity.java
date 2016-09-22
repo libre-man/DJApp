@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import org.json.*;
 
+import nl.sdaas.app.sdaas.ChannelAdapter;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.Session;
 
@@ -21,10 +22,31 @@ public class SessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.channel_item, testListView);
+        String dummyResponse = "{\n" +
+                "    \"success\": true,    \n" +
+                "    \"channels\": [\n" +
+                "        {\n" +
+                "            \"channel_id\": 0,   \n" +
+                "            \"color\": 2,   \n" +
+                "            \"url\": \"http://sdaas.nl/stream/0\" \n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"session_name\": \"CoolDisco\" \n" +
+                "}";
 
-        ListView listView = (ListView) findViewById(R.id.channelListView);
-        listView.setAdapter(adapter);
+        try {
+            this.parseResponse(dummyResponse);
+
+            System.out.println("Test");
+
+            ChannelAdapter adapter = new ChannelAdapter(this, this.session);
+
+            ListView listView = (ListView) findViewById(R.id.channelListView);
+            listView.setAdapter(adapter);
+        } catch (JSONException e) {
+            System.out.println("Fuck");
+            e.printStackTrace();
+        }
     }
 
     private boolean parseResponse(String jsonString) throws JSONException {
@@ -39,12 +61,12 @@ public class SessionActivity extends AppCompatActivity {
             for (int i = 0; i < channels.length(); i++) {
                 JSONObject channel = channels.getJSONObject(i);
                 session.addChannel(channel.getInt("color"), channel.getInt("channel_id"),
-                                   channel.getString("channel_url"));
+                        channel.getString("url"));
             }
             return true;
-        } else {
-            return false;
         }
+
+        throw new JSONException("Unsuccessful");
     }
 
 }

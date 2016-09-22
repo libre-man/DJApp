@@ -20,6 +20,6 @@ public class Session {
     }
 
     public String getName() { return this.name; }
-    public int amountOfChannels() { return this.channels.size(); }
+    public int getAmountOfChannels() { return this.channels.size(); }
     public Channel getChannel(int index) { return this.channels.get(index); }
 }

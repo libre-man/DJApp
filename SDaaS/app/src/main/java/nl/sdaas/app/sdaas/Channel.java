@@ -14,4 +14,8 @@ public class Channel {
         this.channelId = channel_id;
         this.channelUrl = channel_url;
     }
+
+    public int getColor()           { return this.color; }
+    public int getChannelId()       { return this.channelId; }
+    public String getChannelUrl()   { return this.channelUrl; }
 }

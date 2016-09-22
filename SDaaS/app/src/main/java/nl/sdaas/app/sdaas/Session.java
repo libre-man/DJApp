@@ -18,4 +18,8 @@ public class Session {
     public void addChannel(int color, int channelId, String channelUrl) {
         channels.add(new Channel(color, channelId, channelUrl));
     }
+
+    public String getName()                 { return this.name; }
+    public int numOfChannels()              { return this.channels.size(); }
+    public Channel getChannel(int index)    { return this.channels.get(index); }
 }

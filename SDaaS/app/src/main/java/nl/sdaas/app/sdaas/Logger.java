@@ -1,10 +1,10 @@
 package nl.sdaas.app.sdaas;
 
-/**
- * Created by Devinhillenius on 23/09/16.
- */
+import android.util.Log;
 
 public class Logger {
+    private final static String TAG = Logger.class.getName();
+
     private int currentChannel = 0;
     private boolean isChannelSwitched = false;
 

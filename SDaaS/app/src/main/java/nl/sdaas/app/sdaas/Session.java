@@ -5,10 +5,12 @@ import java.util.ArrayList;
 public class Session {
     private ArrayList<Channel> channels;
     private String name;
+    private int currentChannel;
 
     public Session(String name) {
         this.name = name;
         this.channels = new ArrayList<>();
+        this.currentChannel = 0;
     }
 
     /**

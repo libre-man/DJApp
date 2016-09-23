@@ -3,10 +3,8 @@ package nl.sdaas.app.sdaas.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import org.json.*;
+import android.widget.TextView;
 
 import nl.sdaas.app.sdaas.ChannelAdapter;
 import nl.sdaas.app.sdaas.Parser;
@@ -41,10 +39,14 @@ public class SessionActivity extends AppCompatActivity {
             return;
         }
 
+        /* Set session name. */
+        TextView sessionName = (TextView) findViewById(R.id.sessionName);
+        if (sessionName != null)
+            sessionName.setText(String.format("#%s", this.session.getName()));
+
         ChannelAdapter adapter = new ChannelAdapter(this, this.session);
 
         ListView listView = (ListView) findViewById(R.id.channelListView);
-
         if (listView != null)
             listView.setAdapter(adapter);
     }

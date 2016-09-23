@@ -1,8 +1,5 @@
 package nl.sdaas.app.sdaas;
 
-/**
- * Created by Devinhillenius on 22/09/16.
- */
 
 public class Channel {
     private int color;
@@ -15,7 +12,15 @@ public class Channel {
         this.channelUrl = channel_url;
     }
 
-    public int getColor()           { return this.color; }
-    public int getChannelId()       { return this.channelId; }
-    public String getChannelUrl()   { return this.channelUrl; }
+    public int getColor() {
+        return this.color;
+    }
+
+    public int getChannelId() {
+        return this.channelId;
+    }
+
+    public String getChannelUrl() {
+        return this.channelUrl;
+    }
 }

@@ -6,9 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Devinhillenius on 23/09/16.
- */
 
 public class Parser {
 

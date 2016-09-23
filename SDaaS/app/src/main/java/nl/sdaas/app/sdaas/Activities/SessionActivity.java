@@ -50,6 +50,4 @@ public class SessionActivity extends AppCompatActivity {
         if (listView != null)
             listView.setAdapter(adapter);
     }
-
-
 }

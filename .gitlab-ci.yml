@@ -21,7 +21,7 @@ before_script:
 
 build:
   script:
-    - ./gradlew assembleDebug
+    - ./SDaaS/gradlew assembleDebug
   artifacts:
     paths:
-    - app/build/outputs/
+    - SDaaS/app/build/outputs/

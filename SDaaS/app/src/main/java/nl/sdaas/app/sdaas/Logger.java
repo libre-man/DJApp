@@ -11,6 +11,8 @@ public class Logger {
 
     public void setCurrentChannel(int channelIndex) {
         this.currentChannel = channelIndex;
+
+        Log.d(TAG, "Channel switched: " + this.currentChannel);
     }
 
     public void intervalLogger() {

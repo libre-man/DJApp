@@ -33,8 +33,13 @@ public class SessionActivity extends AppCompatActivity {
                 "    \"channels\": [\n" +
                 "        {\n" +
                 "            \"channel_id\": 0,   \n" +
-                "            \"color\": 2,   \n" +
+                "            \"color\": -65281,   \n" +
                 "            \"url\": \"http://sdaas.nl/stream/0\" \n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"channel_id\": 1,   \n" +
+                "            \"color\": -16711681,   \n" +
+                "            \"url\": \"http://sdaas.nl/stream/1\"   \n" +
                 "        }\n" +
                 "    ],\n" +
                 "    \"session_name\": \"CoolDisco\" \n" +

@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:id="@+id/sessionName"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
@@ -23,6 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/sessionName"
         android:id="@+id/channelListView"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15.0sp"
         />
 
 

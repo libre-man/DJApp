@@ -46,8 +46,10 @@ public class ChannelAdapter extends BaseAdapter {
         if (c != null) {
             TextView tv = (TextView) view.findViewById(R.id.channelTextView);
 
-            if (tv != null)
+            if (tv != null) {
                 tv.setText(c.getChannelUrl());
+                tv.setBackgroundColor(c.getColor());
+            }
         }
 
         return view;

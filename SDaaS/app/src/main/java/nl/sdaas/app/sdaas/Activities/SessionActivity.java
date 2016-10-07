@@ -1,5 +1,6 @@
 package nl.sdaas.app.sdaas.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,6 +14,7 @@ import nl.sdaas.app.sdaas.Logger;
 import nl.sdaas.app.sdaas.Parser;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.Session;
+import nl.sdaas.app.sdaas.services.SdaasService;
 
 public class SessionActivity extends AppCompatActivity {
 
@@ -48,6 +50,9 @@ public class SessionActivity extends AppCompatActivity {
         if (sessionName != null)
             sessionName.setText(String.format("#%s", this.session.getName()));
 
+        Intent startIntent = new Intent(this, SdaasService.class);
+        startService(startIntent);
+
         logger = new Logger();
 
         ChannelAdapter adapter = new ChannelAdapter(this, this.session);
@@ -59,7 +64,10 @@ public class SessionActivity extends AppCompatActivity {
             listView.setClickable(true);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    logger.setCurrentChannel(position);
+                    Intent channelChangeIntent = new Intent(SessionActivity.this, SdaasService.class);
+                    channelChangeIntent.putExtra("channel", position);
+                    startService(channelChangeIntent);
+//                    logger.setCurrentChannel(position);
                 }
             });
         }

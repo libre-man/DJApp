@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
  * Created by yourivoet on 01/10/16.
  */
 
-public class ParserTest {
+public class DecoderTest {
 
     @Test
     public void parserInitialSessionResponse_CorrectJson_ReturnsSession() {
@@ -33,7 +33,7 @@ public class ParserTest {
                 "    \"session_name\": \"CoolDisco\" \n" +
                 "}";
 
-        Session s = Parser.parseInitialSessionResponse(json);
+        Session s = Decoder.parseInitialSessionResponse(json);
 
         assertNotNull(s);
         assertThat(s.getAmountOfChannels(), is(2));
@@ -42,7 +42,7 @@ public class ParserTest {
 
     @Test
     public void parserInitialSessionResponse_FalseJson_ReturnsNull() {
-        assertNull(Parser.parseInitialSessionResponse(""));
+        assertNull(Decoder.parseInitialSessionResponse(""));
     }
 
     @Test
@@ -64,6 +64,6 @@ public class ParserTest {
                 "    \"session_name\": \"CoolDisco\" \n" +
                 "}";
 
-        assertNull(Parser.parseInitialSessionResponse(json));
+        assertNull(Decoder.parseInitialSessionResponse(json));
     }
 }

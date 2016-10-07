@@ -12,6 +12,7 @@ import nl.sdaas.app.sdaas.Logger;
  */
 
 public class SdaasService extends Service {
+    private final static String TAG = SdaasService.class.getName();
     private Logger logger;
 
     @Override

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import nl.sdaas.app.sdaas.ChannelAdapter;
 import nl.sdaas.app.sdaas.Logger;
-import nl.sdaas.app.sdaas.Parser;
+import nl.sdaas.app.sdaas.Decoder;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.Session;
 import nl.sdaas.app.sdaas.services.SdaasService;
@@ -45,7 +45,7 @@ public class SessionActivity extends AppCompatActivity {
                 "    \"session_name\": \"CoolDisco\" \n" +
                 "}";
 
-        if ((this.session = Parser.parseInitialSessionResponse(dummyResponse)) == null) {
+        if ((this.session = Decoder.parseInitialSessionResponse(dummyResponse)) == null) {
             Log.d(TAG, "Cannot parse session");
             return;
         }
@@ -57,9 +57,7 @@ public class SessionActivity extends AppCompatActivity {
 
         Intent startIntent = new Intent(this, SdaasService.class);
         startService(startIntent);
-
-        logger = new Logger();
-
+        // TODO: Send session info to Logger!
         ChannelAdapter adapter = new ChannelAdapter(this, this.session);
 
         ListView listView = (ListView) findViewById(R.id.channelListView);
@@ -72,7 +70,6 @@ public class SessionActivity extends AppCompatActivity {
                     Intent channelChangeIntent = new Intent(SessionActivity.this, SdaasService.class);
                     channelChangeIntent.putExtra("channel", position);
                     startService(channelChangeIntent);
-//                    logger.setCurrentChannel(position);
                 }
             });
         }

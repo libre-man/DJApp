@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class Parser {
+public class Decoder {
 
-    private final static String TAG = Parser.class.getName();
+    private final static String TAG = Decoder.class.getName();
 
     public static Session parseInitialSessionResponse(String jsonString) {
         try {

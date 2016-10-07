@@ -2,6 +2,8 @@ package nl.sdaas.app.sdaas;
 
 import android.util.Log;
 
+import java.util.HashMap;
+
 public class Logger {
     private final static String TAG = Logger.class.getName();
     private final static int INTERVAL = 5000;
@@ -17,7 +19,11 @@ public class Logger {
 
     public void intervalLogger() {
         while (this.isRunning) {
-            System.out.println("Data: " + this.currentChannel);
+            HashMap data = new HashMap<String, String>();
+            data.put("client_id", "0");
+            data.put("session_id", "0");
+            data.put("channel_id", Integer.toString(currentChannel));
+            System.out.println(Encoder.encodeDataLogMessage(data));
 
             try {
                 Thread.sleep(INTERVAL);

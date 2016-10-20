@@ -21,7 +21,6 @@ public class SessionActivity extends AppCompatActivity {
     private final static String TAG = SessionActivity.class.getName();
 
     private Session session;
-    private Logger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

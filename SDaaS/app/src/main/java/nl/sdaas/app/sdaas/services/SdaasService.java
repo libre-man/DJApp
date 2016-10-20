@@ -5,11 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.view.KeyEvent;
 
 import nl.sdaas.app.sdaas.Logger;
@@ -22,13 +20,16 @@ import nl.sdaas.app.sdaas.Session;
 public class SdaasService extends Service {
     private final static String TAG = SdaasService.class.getName();
     private Logger logger;
-    private AudioManager mAudioManager;
-    private ComponentName mReceiverComponent;
     private Session session;
+
+    /* Objects needed to receive media button presses. */
+    private AudioManager audioManager;
+    private ComponentName receiverComponent;
 
     @Override
     public void onDestroy() {
-        mAudioManager.unregisterMediaButtonEventReceiver(mReceiverComponent);
+        /* Unregister the Media Button Receiver (mReceiverComponent). */
+        audioManager.unregisterMediaButtonEventReceiver(this.receiverComponent);
         super.onDestroy();
     }
 
@@ -54,9 +55,9 @@ public class SdaasService extends Service {
         loggingThread.start();
 
         /* Set up the Media Button receiver. */
-        this.mAudioManager =  (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        this.mReceiverComponent = new ComponentName(this,HeadphoneButtonReceiver.class);
-        mAudioManager.registerMediaButtonEventReceiver(mReceiverComponent);
+        this.audioManager =  (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        this.receiverComponent = new ComponentName(this,HeadphoneButtonReceiver.class);
+        this.audioManager.registerMediaButtonEventReceiver(this.receiverComponent);
 
     }
 
@@ -66,6 +67,7 @@ public class SdaasService extends Service {
         return null;
     }
 
+    /* Class to handle incoming Media Button clicks. This is done in the onReceive method. */
     public static class HeadphoneButtonReceiver extends BroadcastReceiver {
 
         public HeadphoneButtonReceiver() {

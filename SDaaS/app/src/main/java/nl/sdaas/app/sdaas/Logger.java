@@ -8,13 +8,23 @@ public class Logger {
     private final static String TAG = Logger.class.getName();
     private final static int INTERVAL = 5000;
 
+    private final int AMOUNT_OF_CHANNELS;
+
     private int currentChannel = 0;
     private boolean isRunning = true;
+
+    public Logger(int amountOfChannels) {
+        this.AMOUNT_OF_CHANNELS = amountOfChannels;
+    }
 
     public void setCurrentChannel(int channelIndex) {
         this.currentChannel = channelIndex;
 
         Log.d(TAG, "Channel switched: " + this.currentChannel);
+    }
+
+    public void nextChannel() {
+        this.setCurrentChannel((currentChannel + 1) % AMOUNT_OF_CHANNELS);
     }
 
     public void intervalLogger() {

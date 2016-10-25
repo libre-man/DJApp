@@ -1,11 +1,9 @@
 package nl.sdaas.app.sdaas.services;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -45,21 +43,11 @@ public class SdaasService extends Service {
     private Logger logger;
     private Session session;
 
-    /* Objects needed to receive media button presses. */
-    private AudioManager audioManager;
-    private ComponentName receiverComponent;
-
-    public SdaasService() {
-        createSession(this.dummyResponse);
-        setUpLogger();
-
-        // TODO: Get response from Server!
-    }
+    private MediaSession mediaSession;
 
     @Override
     public void onDestroy() {
-        /* Unregister the Media Button Receiver (mReceiverComponent). */
-        audioManager.unregisterMediaButtonEventReceiver(this.receiverComponent);
+        this.mediaSession.release();
         super.onDestroy();
     }
 
@@ -70,13 +58,20 @@ public class SdaasService extends Service {
         } else if (intent.getBooleanExtra("nextChannel", false)) {
             this.logger.nextChannel();
         }
+
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        createSession(this.dummyResponse);
+        setUpLogger();
         setUpMediaButtonReceiver();
+    }
+
+    public void setChannel(int channel) {
+        this.logger.setCurrentChannel(channel);
     }
 
     /**
@@ -99,9 +94,33 @@ public class SdaasService extends Service {
      */
     private void setUpMediaButtonReceiver() {
         /* Set up the Media Button receiver. */
-        this.audioManager =  (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        this.receiverComponent = new ComponentName(this,HeadphoneButtonReceiver.class);
-        this.audioManager.registerMediaButtonEventReceiver(this.receiverComponent);
+        mediaSession = new MediaSession(getApplicationContext(), "TAG");
+        mediaSession.setCallback(new MediaSession.Callback() {
+            @Override
+            public boolean onMediaButtonEvent(Intent mediaButtonIntent) {
+                String intentAction = mediaButtonIntent.getAction();
+                System.out.println(intentAction);
+
+                if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+                    KeyEvent event = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+                    if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
+                        SdaasService.this.logger.nextChannel();
+                    }
+                }
+
+                return true;
+            }
+        });
+
+        PlaybackState state = new PlaybackState.Builder()
+                .setActions(PlaybackState.ACTION_PLAY_PAUSE)
+                .setState(PlaybackState.STATE_PLAYING, 0, 0, 0)
+                .build();
+
+        mediaSession.setPlaybackState(state);
+        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setActive(true);
     }
 
     /**
@@ -117,25 +136,6 @@ public class SdaasService extends Service {
 
     public Session getSession() {
         return this.session;
-    }
-
-    public static class HeadphoneButtonReceiver extends BroadcastReceiver {
-
-        public HeadphoneButtonReceiver() {
-            super();
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String intentAction = intent.getAction();
-            KeyEvent keyEvent  = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                Intent channelSwitchIntent = new Intent(context, SdaasService.class);
-                channelSwitchIntent.putExtra("nextChannel", true);
-                context.startService(channelSwitchIntent);
-                System.out.println("BUTTON PRESS: " + intentAction);
-            }
-        }
     }
 
     @Nullable

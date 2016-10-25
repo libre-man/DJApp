@@ -14,8 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import nl.sdaas.app.sdaas.ChannelAdapter;
-import nl.sdaas.app.sdaas.Logger;
-import nl.sdaas.app.sdaas.Decoder;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.Session;
 import nl.sdaas.app.sdaas.services.SdaasService;
@@ -32,8 +30,8 @@ public class SessionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_session);
 
         Intent startIntent = new Intent(this, SdaasService.class);
-        //startService(startIntent);
         bindService(startIntent, connection, Context.BIND_AUTO_CREATE);
+
     }
 
     private void checkForClicks(ChannelAdapter adapter) {
@@ -44,9 +42,7 @@ public class SessionActivity extends AppCompatActivity {
             listView.setClickable(true);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent channelChangeIntent = new Intent(SessionActivity.this, SdaasService.class);
-                    channelChangeIntent.putExtra("channel", position);
-                    startService(channelChangeIntent);
+                    SessionActivity.this.service.setChannel(position);
                 }
             });
         }

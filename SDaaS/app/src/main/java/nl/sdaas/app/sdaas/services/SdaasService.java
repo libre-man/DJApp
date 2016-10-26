@@ -78,7 +78,7 @@ public class SdaasService extends Service {
      * Set up and start the logger.
      */
     private void setUpLogger() {
-        this.logger = new Logger(session.getAmountOfChannels());
+        this.logger = new Logger(getApplicationContext(), session.getAmountOfChannels());
         /* Set up Logging thread! */
         Thread loggingThread = new Thread(new Runnable() {
             @Override

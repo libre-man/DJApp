@@ -1,5 +1,8 @@
 package nl.sdaas.app.sdaas;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -12,9 +15,15 @@ public class Logger {
 
     private int currentChannel = 0;
     private boolean isRunning = true;
+    private Context context;
 
-    public Logger(int amountOfChannels) {
+    /* Accelerometer variables. */
+    private Sensor accelerometer;
+
+
+    public Logger(Context context, int amountOfChannels) {
         this.AMOUNT_OF_CHANNELS = amountOfChannels;
+        this.context = context;
     }
 
     public void setCurrentChannel(int channelIndex) {
@@ -45,6 +54,16 @@ public class Logger {
 
     public void toggleRunning() {
         this.isRunning = !this.isRunning;
+    }
+
+    public boolean checkForAccelerometer() {
+        SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            this.accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            return true;
+        }
+
+        return false;
     }
 
 }

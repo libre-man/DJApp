@@ -8,11 +8,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".services.SdaasService$HeadphoneButtonReceiver">
-            <intent-filter android:priority="1000" >
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
         <activity android:name=".activities.SessionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

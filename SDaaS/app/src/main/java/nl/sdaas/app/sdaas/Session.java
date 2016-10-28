@@ -1,8 +1,11 @@
 package nl.sdaas.app.sdaas;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Session {
+public class Session implements Parcelable {
     private ArrayList<Channel> channels;
     private String name;
     private int currentChannel;
@@ -33,5 +36,15 @@ public class Session {
 
     public Channel getChannel(int index) {
         return this.channels.get(index);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

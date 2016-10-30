@@ -5,7 +5,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
+
+import org.json.JSONObject;
+
 import java.util.HashMap;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+
 
 public class Logger {
     private final static String TAG = Logger.class.getName();
@@ -42,12 +53,33 @@ public class Logger {
             data.put("client_id", "0");
             data.put("session_id", "0");
             data.put("channel_id", Integer.toString(currentChannel));
-            System.out.println(Encoder.encodeDataLogMessage(data));
+
+            JSONObject encoded = Encoder.encodeDataLogMessage(data);
 
             try {
-                Thread.sleep(INTERVAL);
-            } catch(InterruptedException e) {
-                this.isRunning = false;
+                StringEntity entity = new StringEntity(encoded.toString());
+
+                SyncHttpClient client = new SyncHttpClient();
+
+                client.post(this.context, "http://10.1.10.179:5000/log_data", entity, "application/json", new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        System.out.println("Great success!");
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        System.out.println("Great failure! " + statusCode);
+                    }
+                });
+
+                try {
+                    Thread.sleep(INTERVAL);
+                } catch (InterruptedException e) {
+                    this.isRunning = false;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
     }

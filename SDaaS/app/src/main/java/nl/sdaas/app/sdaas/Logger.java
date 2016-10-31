@@ -27,6 +27,7 @@ public class Logger {
     private int currentChannel = 0;
     private boolean isRunning = true;
     private Context context;
+    private Server server;
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
@@ -35,6 +36,7 @@ public class Logger {
     public Logger(Context context, int amountOfChannels) {
         this.AMOUNT_OF_CHANNELS = amountOfChannels;
         this.context = context;
+        this.server = new Server("http://10.1.10.179:5000");
     }
 
     public void setCurrentChannel(int channelIndex) {
@@ -54,32 +56,12 @@ public class Logger {
             data.put("session_id", "0");
             data.put("channel_id", Integer.toString(currentChannel));
 
-            JSONObject encoded = Encoder.encodeDataLogMessage(data);
+            this.server.logData(this.context, Encoder.encodeDataLogMessage(data));
 
             try {
-                StringEntity entity = new StringEntity(encoded.toString());
-
-                SyncHttpClient client = new SyncHttpClient();
-
-                client.post(this.context, "http://10.1.10.179:5000/log_data", entity, "application/json", new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        System.out.println("Great success!");
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        System.out.println("Great failure! " + statusCode);
-                    }
-                });
-
-                try {
-                    Thread.sleep(INTERVAL);
-                } catch (InterruptedException e) {
-                    this.isRunning = false;
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+                Thread.sleep(INTERVAL);
+            } catch (InterruptedException e) {
+                this.isRunning = false;
             }
         }
     }

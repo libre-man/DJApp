@@ -47,6 +47,7 @@ public class SdaasService extends Service {
 
     @Override
     public void onDestroy() {
+        logger.onDestroy();
         this.mediaSession.release();
         super.onDestroy();
     }

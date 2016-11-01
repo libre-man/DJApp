@@ -34,6 +34,12 @@ public class SessionActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService();
+    }
+
     private void checkForClicks(ChannelAdapter adapter) {
         ListView listView = (ListView) findViewById(R.id.channelListView);
         if (listView != null) {
@@ -82,10 +88,8 @@ public class SessionActivity extends AppCompatActivity {
                 setSessionName("SessionError");
             } else {
                 setSessionName(session.getName());
-                unbindService();
                 checkForClicks(new ChannelAdapter(SessionActivity.this, session));
             }
-            unbindService();
         }
 
         @Override

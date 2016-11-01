@@ -2,12 +2,14 @@ package nl.sdaas.app.sdaas;
 
 import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
 import java.util.HashMap;
 
-public class Logger {
+public class Logger implements SensorEventListener{
     private final static String TAG = Logger.class.getName();
     private final static int INTERVAL = 5000;
 
@@ -19,11 +21,16 @@ public class Logger {
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
+    private SensorManager manager;
 
 
     public Logger(Context context, int amountOfChannels) {
         this.AMOUNT_OF_CHANNELS = amountOfChannels;
         this.context = context;
+        this.manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if ((this.accelerometer = checkForAccelerometer()) != null) {
+            this.manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     public void setCurrentChannel(int channelIndex) {
@@ -56,14 +63,28 @@ public class Logger {
         this.isRunning = !this.isRunning;
     }
 
-    public boolean checkForAccelerometer() {
-        SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        if (manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
-            this.accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            return true;
+    public Sensor checkForAccelerometer() {
+        if (this.manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            return this.manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
 
-        return false;
+        return null;
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Log.d("X CHANGED: ", Float.toString(event.values[0]));
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        Log.d(TAG, "Accuracy Changed to: " + Integer.toString(accuracy));
+        return;
+    }
+
+    public void onDestroy() {
+        if (this.accelerometer != null) {
+            this.manager.unregisterListener(this, accelerometer);
+        }
+    }
 }

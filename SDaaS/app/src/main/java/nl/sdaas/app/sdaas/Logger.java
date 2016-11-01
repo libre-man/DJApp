@@ -74,6 +74,8 @@ public class Logger implements SensorEventListener{
     @Override
     public void onSensorChanged(SensorEvent event) {
         Log.d("X CHANGED: ", Float.toString(event.values[0]));
+        Log.d("Y CHANGED: ", Float.toString(event.values[1]));
+        Log.d("Z CHANGED: ", Float.toString(event.values[2]));
     }
 
     @Override

@@ -44,6 +44,15 @@ public class Server {
         }
     }
 
+    public void joinSession(Context context, JSONObject data) {
+        try {
+            StringEntity entity = new StringEntity(data.toString());
+            this.post(context, "join_session", entity);
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
     public JSONObject getResponse() {
         return this.response;
     }

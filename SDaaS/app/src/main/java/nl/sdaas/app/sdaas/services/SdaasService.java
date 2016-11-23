@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import org.json.JSONObject;
+
 import nl.sdaas.app.sdaas.Decoder;
 import nl.sdaas.app.sdaas.Logger;
 import nl.sdaas.app.sdaas.SdaasApplication;
@@ -54,7 +56,12 @@ public class SdaasService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getIntExtra("channel", -1) >= 0) {
+        if (intent.hasExtra("initial_data")) {
+            String data = intent.getStringExtra("initial_data");
+            System.out.println(data);
+            createSession(data);
+            setUpLogger();
+        } if (intent.getIntExtra("channel", -1) >= 0) {
             this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
         } else if (intent.getBooleanExtra("nextChannel", false)) {
             this.logger.nextChannel();
@@ -66,9 +73,7 @@ public class SdaasService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createSession(this.dummyResponse);
-        setUpLogger();
-        setUpMediaButtonReceiver();
+        //setUpMediaButtonReceiver();
     }
 
     public void setChannel(int channel) {

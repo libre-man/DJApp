@@ -40,8 +40,12 @@ public class Encoder {
             JSONObject message = new JSONObject();
 
             message.put("time", System.currentTimeMillis() / 1000);
-            message.put("client_id", clientId);
-            message.put("code", code);
+
+            JSONObject data = new JSONObject();
+            data.put("client_id", clientId);
+            data.put("session_id", Integer.parseInt(code));
+
+            message.put("data", data);
 
             return message;
         } catch (JSONException e) {

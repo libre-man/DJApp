@@ -1,5 +1,6 @@
 package nl.sdaas.app.sdaas.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import nl.sdaas.app.sdaas.Encoder;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Server;
+import nl.sdaas.app.sdaas.services.SdaasService;
 
 public class JoinSessionActivity extends AppCompatActivity {
 
@@ -22,7 +24,6 @@ public class JoinSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_session);
 
-        System.out.println("Test0");
         this.createClient();
 
         Button button = (Button) findViewById(R.id.button);
@@ -30,13 +31,36 @@ public class JoinSessionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
 
-                System.out.println(editText.getText());
+                String code = editText.getText().toString();
+                sendRequest(code);
             }
         });
     }
 
-    private void sendRequest(String code) {
-        Server server = ((SdaasApplication)this.getApplication()).getServer();
+    private void sendRequest(final String code) {
+        final Server server = ((SdaasApplication)this.getApplication()).getServer();
+        SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+        final int clientId = prefs.getInt("client_id", 0);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                server.joinSession(getApplicationContext(), Encoder.encodeJoinSessionMessage(clientId, code));
+            }
+        });
+
+        thread.start();
+
+        try {
+            thread.join();
+
+            Intent intent = new Intent(this, SdaasService.class);
+            intent.putExtra("initial_data", server.getResponse().toString());
+            startService(intent);
+            startActivity(new Intent(this, SessionActivity.class));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createClient() {

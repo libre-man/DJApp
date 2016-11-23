@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 
 import nl.sdaas.app.sdaas.Decoder;
 import nl.sdaas.app.sdaas.Logger;
+import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Session;
 
 /**
@@ -78,7 +79,7 @@ public class SdaasService extends Service {
      * Set up and start the logger.
      */
     private void setUpLogger() {
-        this.logger = new Logger(getApplicationContext(), session.getAmountOfChannels());
+        this.logger = new Logger(getApplicationContext(), session.getAmountOfChannels(), ((SdaasApplication)this.getApplication()).getServer());
         /* Set up Logging thread! */
         Thread loggingThread = new Thread(new Runnable() {
             @Override

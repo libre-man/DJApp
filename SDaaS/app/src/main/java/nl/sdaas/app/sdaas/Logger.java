@@ -32,11 +32,10 @@ public class Logger {
     /* Accelerometer variables. */
     private Sensor accelerometer;
 
-
-    public Logger(Context context, int amountOfChannels) {
+    public Logger(Context context, int amountOfChannels, Server server) {
         this.AMOUNT_OF_CHANNELS = amountOfChannels;
         this.context = context;
-        this.server = new Server("http://10.1.10.179:5000");
+        this.server = server;
     }
 
     public void setCurrentChannel(int channelIndex) {

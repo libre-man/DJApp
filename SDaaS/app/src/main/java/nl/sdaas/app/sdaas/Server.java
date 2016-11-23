@@ -35,10 +35,23 @@ public class Server {
         }
     }
 
+    public void createClient(Context context, JSONObject data) {
+        try {
+            StringEntity entity = new StringEntity(data.toString());
+            this.post(context, "new_client", entity);
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
+    public JSONObject getResponse() {
+        return this.response;
+    }
+
     private void post(Context context, String action, StringEntity entity) {
         this.response = null;
 
-        this.client.post(context, this.url + "/" + action, entity, "application/json", new JsonHttpResponseHandler() {
+        this.client.post(context, this.url + "/" + action + "/", entity, "application/json", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Server.this.response = response;

@@ -15,6 +15,42 @@ public class Encoder {
     private final static String TAG = Encoder.class.getName();
     private final static String[] REQUIRED_KEYS = {"client_id", "session_id", "channel_id"};
 
+    public static JSONObject encodeNewClientMessage(String name, long birthDate) {
+        try {
+            JSONObject message = new JSONObject();
+
+            message.put("time", System.currentTimeMillis() / 1000);
+
+            JSONObject data = new JSONObject();
+            data.put("name", name);
+            data.put("birth_date", birthDate);
+
+            message.put("data", data);
+
+            return message;
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
+    public static JSONObject encodeJoinSessionMessage(int clientId, String code) {
+        try {
+            JSONObject message = new JSONObject();
+
+            message.put("time", System.currentTimeMillis() / 1000);
+            message.put("client_id", clientId);
+            message.put("code", code);
+
+            return message;
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
     public static JSONObject encodeDataLogMessage(HashMap<String, String> data) {
         try {
             if (containsRequiredKeys(data)) {

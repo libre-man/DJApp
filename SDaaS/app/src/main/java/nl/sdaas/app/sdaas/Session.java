@@ -1,19 +1,15 @@
 package nl.sdaas.app.sdaas;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
-public class Session implements Parcelable {
+public class Session {
     private ArrayList<Channel> channels;
     private String name;
-    private int currentChannel;
+    private long partDuration = 30041;
 
     public Session(String name) {
         this.name = name;
         this.channels = new ArrayList<>();
-        this.currentChannel = 0;
     }
 
     /**
@@ -38,13 +34,8 @@ public class Session implements Parcelable {
         return this.channels.get(index);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public long getPartDuration() {
+        return this.partDuration;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 }

@@ -1,5 +1,6 @@
 package nl.sdaas.app.sdaas;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
@@ -25,10 +26,13 @@ public class NtpUtils {
 
         try {
             client.open();
-
+            Log.d(TAG, "Starting client");
             InetAddress address = InetAddress.getByName(host);
+            Log.d(TAG, "Valid address");
             info = client.getTime(address);
+            Log.d(TAG, "Getting time");
         } catch (Exception e) {
+            e.printStackTrace();
             Log.d(TAG, "Error getting NTP information " + e.getMessage());
         } finally {
             client.close();
@@ -36,5 +40,4 @@ public class NtpUtils {
 
         return info;
     }
-
 }

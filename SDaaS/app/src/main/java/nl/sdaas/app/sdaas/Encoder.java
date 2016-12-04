@@ -7,9 +7,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-/**
- * Created by Devinhillenius on 07/10/16.
- */
 
 public class Encoder {
     private final static String TAG = Encoder.class.getName();

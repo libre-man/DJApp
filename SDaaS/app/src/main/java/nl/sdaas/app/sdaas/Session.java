@@ -6,10 +6,12 @@ public class Session {
     private ArrayList<Channel> channels;
     private String name;
     private long partDuration = 30041;
+    private long start;
 
-    public Session(String name) {
+    public Session(String name, long start) {
         this.name = name;
         this.channels = new ArrayList<>();
+        this.start = start;
     }
 
     /**
@@ -25,6 +27,8 @@ public class Session {
     public String getName() {
         return this.name;
     }
+
+    public long getStart() { return this.start; }
 
     public int getAmountOfChannels() {
         return this.channels.size();

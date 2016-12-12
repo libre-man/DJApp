@@ -16,7 +16,7 @@ public class Decoder {
             JSONObject sessionInfo = new JSONObject(jsonString);
 
             if (sessionInfo.getBoolean("success")) {
-                Session session = new Session(sessionInfo.getString("session_name"));
+                Session session = new Session(sessionInfo.getString("session_name"), sessionInfo.getLong("session_start"));
 
                 /* Get the channels in the session. */
                 JSONArray channels = sessionInfo.getJSONArray("channels");

@@ -80,7 +80,7 @@ public class SdaasService extends Service {
     }
 
     private void setupStreamer() {
-        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), System.currentTimeMillis() - 5000, 30041);
+        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), this.session.getStart(), 30041);
     }
 
     /**

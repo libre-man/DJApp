@@ -29,12 +29,19 @@ public class Streamer {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        //TimeInfo ntpInfo = getTimeInfo(ntpHost);
-        //ntpInfo.computeDetails();
+        TimeInfo ntpInfo = getTimeInfo("europe.pool.ntp.org");
+        ntpInfo.computeDetails();
 
         /* Apply offset from NTP server. */
-        final long current = System.currentTimeMillis();// + ntpInfo.getOffset();
+        final long offset = ntpInfo.getOffset();
+
+        Log.d(TAG, "Offset: " + offset);
+        final long current = System.currentTimeMillis() + ntpInfo.getOffset();
         this.currentPart = (int)((current - start) / partDuration);
+
+        Log.d(TAG, currentPart + " start: " + start + " current " + current);
+
+        final int seekPart = currentPart;
 
         this.currentPlayer = new MediaPlayer();
         this.currentPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -48,11 +55,12 @@ public class Streamer {
             this.currentPlayer.setDataSource(channel.getChannelUrl() + "/part" + this.currentPart + ".mp3");
             this.currentPlayer.prepareAsync();
 
+
             this.currentPart++;
 
             this.nextPlayer.setDataSource(channel.getChannelUrl() + "/part" + (this.currentPart) + ".mp3");
             this.nextPlayer.prepareAsync();
-        } catch (IllegalArgumentException|IOException e) {
+        } catch (Exception e) {
             Log.d(TAG, "Error setting data source " + e.getMessage());
         }
 
@@ -62,8 +70,8 @@ public class Streamer {
             @Override
             public void onPrepared(MediaPlayer player) {
                 Log.d(TAG, "On prepared called");
+                player.seekTo((int)((System.currentTimeMillis() + offset) - start - (seekPart * player.getDuration())));
                 player.start();
-                player.seekTo((int)(current - start - (currentPart * partDuration)));
             }
         });
 
@@ -74,16 +82,12 @@ public class Streamer {
         this.currentPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                Log.d(TAG, "CURRENT PLAYER COMPLETE");
-
                 currentPlayer = nextPlayer;
                 setOnCompletionListener();
 
                 nextPlayer = new MediaPlayer();
                 nextPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 currentPart++;
-
-                Log.d(TAG, "Current part: " + currentPart);
 
                 try {
                     nextPlayer.setDataSource(currentChannel.getChannelUrl() + "/part" + currentPart + ".mp3");

@@ -2,6 +2,7 @@ package nl.sdaas.app.sdaas.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -53,14 +54,16 @@ public class JoinSessionActivity extends AppCompatActivity {
         });
 
         thread.start();
-
         try {
             thread.join();
-
-            Intent intent = new Intent(this, SdaasService.class);
-            intent.putExtra("initial_data", server.getResponse().toString());
-            startService(intent);
-            startActivity(new Intent(this, SessionActivity.class));
+            JSONObject response = server.getResponse();
+            System.out.println(response.toString());
+            if (response.optBoolean("success")) {
+                Intent intent = new Intent(this, SdaasService.class);
+                intent.putExtra("initial_data", response.toString());
+                startService(intent);
+                startActivity(new Intent(this, SessionActivity.class));
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

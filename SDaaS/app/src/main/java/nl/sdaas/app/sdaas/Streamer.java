@@ -2,6 +2,7 @@ package nl.sdaas.app.sdaas;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -29,17 +30,14 @@ public class Streamer {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        TimeInfo ntpInfo = getTimeInfo("europe.pool.ntp.org");
+        TimeInfo ntpInfo = getTimeInfo("0.nl.pool.ntp.org");
         ntpInfo.computeDetails();
 
         /* Apply offset from NTP server. */
         final long offset = ntpInfo.getOffset();
 
-        Log.d(TAG, "Offset: " + offset);
         final long current = System.currentTimeMillis() + ntpInfo.getOffset();
         this.currentPart = (int)((current - start) / partDuration);
-
-        Log.d(TAG, currentPart + " start: " + start + " current " + current);
 
         final int seekPart = currentPart;
 
@@ -69,19 +67,44 @@ public class Streamer {
         this.currentPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer player) {
-                Log.d(TAG, "On prepared called");
-                player.seekTo((int)((System.currentTimeMillis() + offset) - start - (seekPart * player.getDuration())));
-                player.start();
+                int seekto = (int)((System.currentTimeMillis() + offset) - start - (seekPart * player.getDuration()));
+                player.seekTo(seekto);
+            }
+        });
+
+        this.currentPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(MediaPlayer mp) {
+                mp.start();
             }
         });
 
         setNextPlayerListener();
+
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            int previousPos = -1;
+
+            public void run() {
+                if (currentPlayer.isPlaying()) {
+                    if (currentPlayer.getCurrentPosition() == previousPos) {
+                        // Detected stall -> restart player.
+                    }
+                    previousPos = currentPlayer.getCurrentPosition();
+                }
+
+                handler.postDelayed(this, 2500);
+            }
+        };
+
+        runnable.run();
     }
 
     private void setOnCompletionListener() {
         this.currentPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                currentPlayer.release();
                 currentPlayer = nextPlayer;
                 setOnCompletionListener();
 

@@ -12,13 +12,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SessionActivity">
-
-        </activity>
+        <activity android:name=".activities.SessionActivity"></activity>
 
         <service android:name=".services.SdaasService" />
 
-        <activity android:name=".activities.JoinSessionActivity">
+        <activity android:name=".activities.JoinSessionActivity"></activity>
+
+        <activity android:name=".activities.SettingsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

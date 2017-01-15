@@ -1,5 +1,6 @@
 package nl.sdaas.app.sdaas.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,7 +66,9 @@ public class SettingsActivity extends AppCompatActivity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    server.createClient(getApplicationContext(), Encoder.encodeNewClientMessage(year, month, day, gender));
+                    JSONObject message = Encoder.encodeNewClientMessage(year, month, day, gender);
+                    System.out.println(message.toString());
+                    server.createClient(getApplicationContext(), message);
                 }
             });
 
@@ -78,8 +81,12 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putInt("client_id", response.getInt("client_id"));
                 editor.apply();
             }
+
+            startActivity(new Intent(this, JoinSessionActivity.class));
         } catch (NullPointerException|InterruptedException|JSONException e) {
             e.printStackTrace();
         }
+
+
     }
 }

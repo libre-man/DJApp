@@ -16,14 +16,14 @@
 
         <service android:name=".services.SdaasService" />
 
-        <activity android:name=".activities.JoinSessionActivity"></activity>
-
-        <activity android:name=".activities.SettingsActivity">
+        <activity android:name=".activities.JoinSessionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.SettingsActivity">
         </activity>
     </application>
 

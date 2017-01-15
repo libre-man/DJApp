@@ -24,7 +24,10 @@ public class JoinSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_session);
 
-        this.createClient();
+        SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+
+        if (!prefs.contains("client_id"))
+            startActivity(new Intent(this, SettingsActivity.class));
 
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -61,42 +64,5 @@ public class JoinSessionActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private void createClient() {
-        // TODO: test.
-
-        startActivity(new Intent(this, SettingsActivity.class));
-
-        //SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
-
-        /* If there is no client, request a client from the server. */
-        /*if (!prefs.contains("client_id")) {
-            final Server server = ((SdaasApplication)this.getApplication()).getServer();
-
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    server.createClient(getApplicationContext(), Encoder.encodeNewClientMessage("TestUser", System.currentTimeMillis() / 1000));
-                }
-            });
-
-            thread.start();
-
-            try {
-                thread.join();
-
-                JSONObject response = server.getResponse();
-
-                if (response.getBoolean("success")) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putInt("client_id", response.getInt("client_id"));
-                    editor.apply();
-                }
-            } catch (InterruptedException|JSONException e) {
-                e.printStackTrace();
-            }
-
-        }*/
     }
 }

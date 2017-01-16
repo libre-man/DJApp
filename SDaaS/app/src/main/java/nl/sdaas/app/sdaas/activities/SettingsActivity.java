@@ -11,6 +11,9 @@ import android.widget.RadioButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 import nl.sdaas.app.sdaas.Encoder;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.SdaasApplication;
@@ -51,11 +54,33 @@ public class SettingsActivity extends AppCompatActivity {
     private void setPreferences() {
         SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-
         try {
-            final int year = Integer.parseInt(((EditText)findViewById(R.id.yearText)).getText().toString());
-            final int month = Integer.parseInt(((EditText)findViewById(R.id.monthText)).getText().toString());
-            final int day = Integer.parseInt(((EditText)findViewById(R.id.dayText)).getText().toString());
+            final int year, month, day;
+            // Worst code ever incoming:
+            try {
+                year = Integer.parseInt(((EditText) findViewById(R.id.yearText)).getText().toString());
+                if (year < 1900 || year > Calendar.getInstance().get(Calendar.YEAR))
+                    throw new UnsupportedOperationException();
+            } catch(Exception e) {
+                ((EditText) findViewById(R.id.yearText)).setError("Year wrong!");
+                return;
+            }
+            try {
+                month = Integer.parseInt(((EditText) findViewById(R.id.monthText)).getText().toString());
+                if (month < 1 || month > 12)
+                    throw new UnsupportedOperationException();
+            } catch(Exception e) {
+                ((EditText) findViewById(R.id.monthText)).setError("Month wrong!");
+                return;
+            }
+            try {
+                day = Integer.parseInt(((EditText) findViewById(R.id.dayText)).getText().toString());
+                if (day < 1 || day > 31)
+                    throw new UnsupportedOperationException();
+            } catch(Exception e) {
+                ((EditText) findViewById(R.id.dayText)).setError("Day wrong!");
+                return;
+            }
 
             editor.putInt("client_birth_day", day);
             editor.putInt("client_birth_month", month);

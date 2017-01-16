@@ -63,6 +63,8 @@ public class JoinSessionActivity extends AppCompatActivity {
                 intent.putExtra("initial_data", response.toString());
                 startService(intent);
                 startActivity(new Intent(this, SessionActivity.class));
+            } else {
+                ((EditText) findViewById(R.id.editText)).setError("Session ID not found!");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

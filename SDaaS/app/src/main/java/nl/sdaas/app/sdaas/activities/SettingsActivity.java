@@ -59,7 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
             // Worst code ever incoming:
             try {
                 year = Integer.parseInt(((EditText) findViewById(R.id.yearText)).getText().toString());
-                if (year < 1900 || year > Calendar.getInstance().get(Calendar.YEAR))
+                if (year < 1895 || year > Calendar.getInstance().get(Calendar.YEAR))
                     throw new UnsupportedOperationException();
             } catch(Exception e) {
                 ((EditText) findViewById(R.id.yearText)).setError("Year wrong!");

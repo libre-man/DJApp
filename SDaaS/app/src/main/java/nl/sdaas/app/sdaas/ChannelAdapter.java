@@ -47,13 +47,14 @@ public class ChannelAdapter extends BaseAdapter {
 
         if (c != null) {
             if (tv != null) {
-                tv.setText(c.getChannelUrl());
+                tv.setText(c.getName());
                 tv.setBackgroundColor(c.getColor());
             }
-        } else if (tv != null){
-            tv.setText("Session has not started yet!");
-            tv.setBackgroundColor(Color.GRAY);
         }
+//        } else if (tv != null){
+//            tv.setText("Session has not started yet!");
+//            tv.setBackgroundColor(Color.GRAY);
+//        }
 
         return view;
     }

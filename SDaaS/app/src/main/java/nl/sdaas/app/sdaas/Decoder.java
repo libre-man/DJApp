@@ -22,8 +22,9 @@ public class Decoder {
                 JSONArray channels = sessionInfo.getJSONArray("channels");
                 for (int i = 0; i < channels.length(); i++) {
                     JSONObject channel = channels.getJSONObject(i);
-                    session.addChannel(channel.getInt("color"), channel.getInt("channel_id"),
-                            channel.getString("url"));
+                    System.out.println(channel.toString());
+                    session.addChannel(channel.getString("color"), channel.getInt("channel_id"),
+                                       channel.getString("url"), channel.getString("name"));
                 }
                 return session;
             }

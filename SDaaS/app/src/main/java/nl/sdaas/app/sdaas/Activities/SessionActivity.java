@@ -4,17 +4,24 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import nl.sdaas.app.sdaas.ChannelAdapter;
+import nl.sdaas.app.sdaas.Encoder;
 import nl.sdaas.app.sdaas.R;
+import nl.sdaas.app.sdaas.SdaasApplication;
+import nl.sdaas.app.sdaas.Server;
 import nl.sdaas.app.sdaas.Session;
 import nl.sdaas.app.sdaas.services.SdaasService;
 
@@ -32,6 +39,34 @@ public class SessionActivity extends AppCompatActivity {
         Intent startIntent = new Intent(this, SdaasService.class);
         bindService(startIntent, connection, Context.BIND_AUTO_CREATE);
 
+        Button refreshButton = (Button) findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!bound)
+                            return;
+                        Server server = ((SdaasApplication)getApplication()).getServer();
+                        SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+                        final int clientId = prefs.getInt("client_id", 0);
+
+                        server.joinSession(getApplicationContext(),
+                                           Encoder.encodeJoinSessionMessage(clientId, getSession().getJoinCode()));
+                        JSONObject response = server.getResponse();
+
+                        if (response.optBoolean("success")) {
+                            System.out.println(response.toString());
+                            service.createSession(response.toString(), getSession().getJoinCode());
+                        }
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                thread.start();
+            }
+        });
     }
 
     private void checkForClicks(ChannelAdapter adapter) {
@@ -46,6 +81,12 @@ public class SessionActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService();
+        super.onDestroy();
     }
 
     private void setSessionName(String name) {
@@ -82,10 +123,8 @@ public class SessionActivity extends AppCompatActivity {
                 setSessionName("SessionError");
             } else {
                 setSessionName(session.getName());
-                unbindService();
                 checkForClicks(new ChannelAdapter(SessionActivity.this, session));
             }
-            unbindService();
         }
 
         @Override

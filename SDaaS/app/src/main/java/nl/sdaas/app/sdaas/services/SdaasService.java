@@ -37,10 +37,10 @@ public class SdaasService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.hasExtra("initial_data")) {
+            if (intent.hasExtra("initial_data") && intent.hasExtra("join_code")) {
                 String data = intent.getStringExtra("initial_data");
-                System.out.println(data);
-                createSession(data);
+                String joinCode = intent.getStringExtra("join_code");
+                createSession(data, joinCode);
                 setupLogger();
                 setupStreamer();
             }
@@ -122,8 +122,8 @@ public class SdaasService extends Service {
      *
      * @param jsonResponse: The JSON response string to load the Session from.
      */
-    private void createSession(String jsonResponse) {
-        if ((this.session = Decoder.parseInitialSessionResponse(jsonResponse)) == null) {
+    public void createSession(String jsonResponse, String joinCode) {
+        if ((this.session = Decoder.parseInitialSessionResponse(jsonResponse, joinCode)) == null) {
             Log.d(TAG, "Cannot parse session");
         }
 

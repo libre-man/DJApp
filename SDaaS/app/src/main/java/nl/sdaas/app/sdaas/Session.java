@@ -7,11 +7,13 @@ public class Session {
     private String name;
     private long partDuration = 30041;
     private long start;
+    private String joinCode;
 
-    public Session(String name, long start) {
+    public Session(String name, long start, String joinCode) {
         this.name = name;
         this.channels = new ArrayList<>();
         this.start = start;
+        this.joinCode = joinCode;
     }
 
     /**
@@ -44,6 +46,12 @@ public class Session {
 
     public long getPartDuration() {
         return this.partDuration;
+    }
+
+    public String getJoinCode() { return this.joinCode; }
+
+    public void refreshSession(String name, long start, String joinCode) {
+
     }
 
 }

@@ -11,12 +11,14 @@ public class Decoder {
 
     private final static String TAG = Decoder.class.getName();
 
-    public static Session parseInitialSessionResponse(String jsonString) {
+    public static Session parseInitialSessionResponse(String jsonString, String joinCode) {
         try {
             JSONObject sessionInfo = new JSONObject(jsonString);
 
             if (sessionInfo.getBoolean("success")) {
-                Session session = new Session(sessionInfo.getString("session_name"), sessionInfo.getLong("session_start"));
+                Session session = new Session(sessionInfo.getString("session_name"),
+                                              sessionInfo.getLong("session_start"),
+                                              joinCode);
 
                 /* Get the channels in the session. */
                 JSONArray channels = sessionInfo.getJSONArray("channels");

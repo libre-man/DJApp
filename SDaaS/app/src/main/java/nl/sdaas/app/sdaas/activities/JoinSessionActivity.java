@@ -57,14 +57,14 @@ public class JoinSessionActivity extends AppCompatActivity {
         try {
             thread.join();
             JSONObject response = server.getResponse();
-            System.out.println(response.toString());
             if (response.optBoolean("success")) {
                 Intent intent = new Intent(this, SdaasService.class);
                 intent.putExtra("initial_data", response.toString());
+                intent.putExtra("join_code", code);
                 startService(intent);
                 startActivity(new Intent(this, SessionActivity.class));
             } else {
-                ((EditText) findViewById(R.id.editText)).setError("Session ID not found!");
+                ((EditText) findViewById(R.id.editText)).setError("Join code not found!");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -7,6 +7,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
+
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class Logger implements SensorEventListener{
@@ -18,13 +25,13 @@ public class Logger implements SensorEventListener{
     private int currentChannel = 0;
     private boolean isRunning = true;
     private Context context;
+    private Server server;
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
     private SensorManager manager;
 
-
-    public Logger(Context context, int amountOfChannels) {
+    public Logger(Context context, int amountOfChannels, Server server) {
         this.AMOUNT_OF_CHANNELS = amountOfChannels;
         this.context = context;
         this.manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -49,11 +56,12 @@ public class Logger implements SensorEventListener{
             data.put("client_id", "0");
             data.put("session_id", "0");
             data.put("channel_id", Integer.toString(currentChannel));
-            System.out.println(Encoder.encodeDataLogMessage(data));
+
+            this.server.logData(this.context, Encoder.encodeDataLogMessage(data));
 
             try {
                 Thread.sleep(INTERVAL);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 this.isRunning = false;
             }
         }

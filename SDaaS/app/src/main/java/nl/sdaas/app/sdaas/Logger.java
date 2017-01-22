@@ -38,6 +38,7 @@ public class Logger implements SensorEventListener{
         if ((this.accelerometer = checkForAccelerometer()) != null) {
             this.manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
+        this.server = server;
     }
 
     public void setCurrentChannel(int channelIndex) {

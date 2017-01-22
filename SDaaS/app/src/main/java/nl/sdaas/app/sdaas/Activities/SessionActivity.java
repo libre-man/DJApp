@@ -90,12 +90,6 @@ public class SessionActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        unbindService();
-        super.onDestroy();
-    }
-
     private void setSessionName(String name) {
         TextView sessionName = (TextView) findViewById(R.id.sessionName);
         if (sessionName != null)

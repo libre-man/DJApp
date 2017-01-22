@@ -22,12 +22,14 @@ public class DecoderTest {
                 "        {\n" +
                 "            \"channel_id\": 0,   \n" +
                 "            \"color\": \"#ffffff\",   \n" +
-                "            \"url\": \"http://sdaas.nl/stream/0\" \n" +
+                "            \"url\": \"http://sdaas.nl/stream/0\", \n" +
+                "            \"name\": \"channel 1\" \n" +
                 "        },\n" +
                 "        {\n" +
                 "            \"channel_id\": 1,   \n" +
                 "            \"color\": \"#ffffff\",   \n" +
-                "            \"url\": \"http://sdaas.nl/stream/1\"   \n" +
+                "            \"url\": \"http://sdaas.nl/stream/1\",   \n" +
+                "            \"name\": \"channel 2\" \n" +
                 "        }\n" +
                 "    ],\n" +
                 "    \"session_name\": \"CoolDisco\" \n" +

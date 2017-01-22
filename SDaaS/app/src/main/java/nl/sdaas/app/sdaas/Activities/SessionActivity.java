@@ -27,7 +27,7 @@ import nl.sdaas.app.sdaas.services.SdaasService;
 
 public class SessionActivity extends AppCompatActivity {
     SdaasService service;
-    boolean bound = false;
+    volatile boolean bound = false;
 
     private final static String TAG = SessionActivity.class.getName();
 
@@ -50,14 +50,15 @@ public class SessionActivity extends AppCompatActivity {
                             return;
                         Server server = ((SdaasApplication)getApplication()).getServer();
                         SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
-                        final int clientId = prefs.getInt("client_id", 0);
+                        final int clientId = prefs.getInt("client_id", -1);
 
                         server.joinSession(getApplicationContext(),
-                                           Encoder.encodeJoinSessionMessage(clientId, getSession().getJoinCode()));
+                                           Encoder.encodeJoinSessionMessage(clientId,
+                                                                            getSession().
+                                                                                getJoinCode()));
                         JSONObject response = server.getResponse();
 
                         if (response.optBoolean("success")) {
-                            System.out.println(response.toString());
                             service.createSession(response.toString(), getSession().getJoinCode());
                         }
                         finish();

@@ -61,11 +61,9 @@ public class SessionActivity extends AppCompatActivity {
                         if (response.optBoolean("success")) {
                             service.createSession(response.toString(), getSession().getJoinCode());
                         }
-                        
+
                         finish();
-                        overridePendingTransition(0, 0);
                         startActivity(getIntent());
-                        overridePendingTransition(0, 0);
                     }
                 });
                 thread.start();

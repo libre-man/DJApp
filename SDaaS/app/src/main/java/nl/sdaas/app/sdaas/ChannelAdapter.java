@@ -1,6 +1,7 @@
 package nl.sdaas.app.sdaas;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,18 @@ public class ChannelAdapter extends BaseAdapter {
             view = this.inflater.inflate(R.layout.channel_item, parent, false);
 
         Channel c = (Channel) this.getItem(position);
+        TextView tv = (TextView) view.findViewById(R.id.channelTextView);
 
         if (c != null) {
-            TextView tv = (TextView) view.findViewById(R.id.channelTextView);
-
             if (tv != null) {
-                tv.setText(c.getChannelUrl());
+                tv.setText(c.getName());
                 tv.setBackgroundColor(c.getColor());
             }
         }
+//        } else if (tv != null){
+//            tv.setText("Session has not started yet!");
+//            tv.setBackgroundColor(Color.GRAY);
+//        }
 
         return view;
     }

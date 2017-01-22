@@ -10,41 +10,21 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import org.json.JSONObject;
-
 import nl.sdaas.app.sdaas.Decoder;
 import nl.sdaas.app.sdaas.Logger;
 import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Session;
+import nl.sdaas.app.sdaas.Streamer;
 
-/**
- * Created by Devinhillenius on 07/10/16.
- */
 
 public class SdaasService extends Service {
-    private final String dummyResponse = "{\n" +
-            "    \"success\": true,    \n" +
-            "    \"channels\": [\n" +
-            "        {\n" +
-            "            \"channel_id\": 0,   \n" +
-            "            \"color\": -65281,   \n" +
-            "            \"url\": \"http://sdaas.nl/stream/0\" \n" +
-            "        },\n" +
-            "        {\n" +
-            "            \"channel_id\": 1,   \n" +
-            "            \"color\": -16711681,   \n" +
-            "            \"url\": \"http://sdaas.nl/stream/1\"   \n" +
-            "        }\n" +
-            "    ],\n" +
-            "    \"session_name\": \"CoolDisco\" \n" +
-            "}";
-
     private final static String TAG = SdaasService.class.getName();
     /* Binder for binding this service. */
     private final IBinder sdaasBinder = new SdaasBinder();
 
     private Logger logger;
     private Session session;
+    private Streamer streamer;
 
     private MediaSession mediaSession;
 
@@ -57,15 +37,19 @@ public class SdaasService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.hasExtra("initial_data")) {
-            String data = intent.getStringExtra("initial_data");
-            System.out.println(data);
-            createSession(data);
-            setUpLogger();
-        } if (intent.getIntExtra("channel", -1) >= 0) {
-            this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
-        } else if (intent.getBooleanExtra("nextChannel", false)) {
-            this.logger.nextChannel();
+        if (intent != null) {
+            if (intent.hasExtra("initial_data") && intent.hasExtra("join_code")) {
+                String data = intent.getStringExtra("initial_data");
+                String joinCode = intent.getStringExtra("join_code");
+                createSession(data, joinCode);
+                setupLogger();
+                setupStreamer();
+            }
+            if (intent.getIntExtra("channel", -1) >= 0) {
+                this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
+            } else if (intent.getBooleanExtra("nextChannel", false)) {
+                this.logger.nextChannel();
+            }
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -84,7 +68,7 @@ public class SdaasService extends Service {
     /**
      * Set up and start the logger.
      */
-    private void setUpLogger() {
+    private void setupLogger() {
         this.logger = new Logger(getApplicationContext(), session.getAmountOfChannels(), ((SdaasApplication)this.getApplication()).getServer());
         /* Set up Logging thread! */
         Thread loggingThread = new Thread(new Runnable() {
@@ -94,6 +78,10 @@ public class SdaasService extends Service {
             }
         });
         loggingThread.start();
+    }
+
+    private void setupStreamer() {
+        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), this.session.getStart(), 30041);
     }
 
     /**
@@ -132,13 +120,15 @@ public class SdaasService extends Service {
 
     /**
      * Create a Session if the given JSON response string is of the right format.
+     *
      * @param jsonResponse: The JSON response string to load the Session from.
      */
-    private void createSession(String jsonResponse) {
-        if ((this.session = Decoder.parseInitialSessionResponse(jsonResponse)) == null) {
+    public void createSession(String jsonResponse, String joinCode) {
+        if ((this.session = Decoder.parseInitialSessionResponse(jsonResponse, joinCode)) == null) {
             Log.d(TAG, "Cannot parse session");
-            return;
         }
+
+
     }
 
     public Session getSession() {

@@ -1,19 +1,19 @@
 package nl.sdaas.app.sdaas;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
-public class Session implements Parcelable {
+public class Session {
     private ArrayList<Channel> channels;
     private String name;
-    private int currentChannel;
+    private long partDuration = 30041;
+    private long start;
+    private String joinCode;
 
-    public Session(String name) {
+    public Session(String name, long start, String joinCode) {
         this.name = name;
         this.channels = new ArrayList<>();
-        this.currentChannel = 0;
+        this.start = start;
+        this.joinCode = joinCode;
     }
 
     /**
@@ -21,30 +21,37 @@ public class Session implements Parcelable {
      * @param color: The color of the channel to add, using the constants in android.graphics.Color.
      * @param channelId: The id of the channel to add.
      * @param channelUrl: The URL of the stream of the channel to add.
+     * @param name: The name of the session.
      */
-    public void addChannel(int color, int channelId, String channelUrl) {
-        channels.add(new Channel(color, channelId, channelUrl));
+    public void addChannel(String color, int channelId, String channelUrl, String name) {
+        channels.add(new Channel(color, channelId, channelUrl, name));
     }
 
     public String getName() {
         return this.name;
     }
 
+    public long getStart() { return this.start; }
+
     public int getAmountOfChannels() {
         return this.channels.size();
     }
 
     public Channel getChannel(int index) {
-        return this.channels.get(index);
+        if (index >= this.channels.size())
+            return null;
+        else
+            return this.channels.get(index);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public long getPartDuration() {
+        return this.partDuration;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public String getJoinCode() { return this.joinCode; }
+
+    public void refreshSession(String name, long start, String joinCode) {
 
     }
+
 }

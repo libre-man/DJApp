@@ -8,7 +8,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -36,45 +40,76 @@ public class SessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         Intent startIntent = new Intent(this, SdaasService.class);
         bindService(startIntent, connection, Context.BIND_AUTO_CREATE);
+    }
 
-        Button refreshButton = (Button) findViewById(R.id.refresh);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!bound)
-                            return;
-                        Server server = ((SdaasApplication)getApplication()).getServer();
-                        SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
-                        final int clientId = prefs.getInt("client_id", -1);
-
-                        server.joinSession(getApplicationContext(),
-                                           Encoder.encodeJoinSessionMessage(clientId,
-                                                                            getSession().
-                                                                                getJoinCode()));
-                        JSONObject response = server.getResponse();
-
-                        if (response.optBoolean("success")) {
-                            service.createSession(response.toString(), getSession().getJoinCode());
-                        }
-
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                thread.start();
-            }
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                refreshAction();
+                return true;
+
+            case R.id.back:
+                startActivity(new Intent(this, JoinSessionActivity.class));
+                return true;
+
+            case R.id.settings:
+                // GOTO SETTINGS SCREEN
+                return true;
+
+            case R.id.help:
+                // GOTO SETTINGS SCREEN
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void refreshAction() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!bound)
+                    return;
+                Server server = ((SdaasApplication)getApplication()).getServer();
+                SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+                final int clientId = prefs.getInt("client_id", -1);
+
+                server.joinSession(getApplicationContext(),
+                        Encoder.encodeJoinSessionMessage(clientId,
+                                getSession().
+                                        getJoinCode()));
+                JSONObject response = server.getResponse();
+
+                if (response.optBoolean("success")) {
+                    service.createSession(response.toString(), getSession().getJoinCode());
+                }
+
+                finish();
+                startActivity(getIntent());
+            }
+        });
+        thread.start();
     }
 
     private void checkForClicks(ChannelAdapter adapter) {

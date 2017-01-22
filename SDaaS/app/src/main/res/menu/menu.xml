@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh"
+        android:title="Refresh Session"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/back"
+        android:icon="@drawable/ic_back"
+        android:title="Leave Session"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Client Settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/help"
+        android:title="Help"
+        app:showAsAction="never"/>
+</menu>

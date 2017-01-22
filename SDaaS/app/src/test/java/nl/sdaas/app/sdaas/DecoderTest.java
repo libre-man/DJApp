@@ -33,6 +33,7 @@ public class DecoderTest {
                 "        }\n" +
                 "    ],\n" +
                 "    \"session_name\": \"CoolDisco\" \n" +
+                "    \"session_start\": 1000000 \n" +
                 "}";
 
         Session s = Decoder.parseInitialSessionResponse(json, "0");
@@ -64,6 +65,7 @@ public class DecoderTest {
                 "        }\n" +
                 "    ],\n" +
                 "    \"session_name\": \"CoolDisco\" \n" +
+                "    \"session_start\": 1000000 \n" +
                 "}";
 
         assertNull(Decoder.parseInitialSessionResponse(json, "0"));

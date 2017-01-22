@@ -33,7 +33,7 @@ public class DecoderTest {
                 "    \"session_name\": \"CoolDisco\" \n" +
                 "}";
 
-        Session s = Decoder.parseInitialSessionResponse(json);
+        Session s = Decoder.parseInitialSessionResponse(json, "0");
 
         assertNotNull(s);
         assertThat(s.getAmountOfChannels(), is(2));
@@ -42,7 +42,7 @@ public class DecoderTest {
 
     @Test
     public void parserInitialSessionResponse_FalseJson_ReturnsNull() {
-        assertNull(Decoder.parseInitialSessionResponse(""));
+        assertNull(Decoder.parseInitialSessionResponse("", "0"));
     }
 
     @Test
@@ -64,6 +64,6 @@ public class DecoderTest {
                 "    \"session_name\": \"CoolDisco\" \n" +
                 "}";
 
-        assertNull(Decoder.parseInitialSessionResponse(json));
+        assertNull(Decoder.parseInitialSessionResponse(json, "0"));
     }
 }

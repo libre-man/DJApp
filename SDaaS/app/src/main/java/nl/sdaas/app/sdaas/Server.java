@@ -53,6 +53,24 @@ public class Server {
         }
     }
 
+    public void editClient(Context context, JSONObject data) {
+        try {
+            StringEntity entity = new StringEntity(data.toString());
+            this.post(context, "change_client", entity);
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
+    public void deleteClient(Context context, JSONObject data) {
+        try {
+            StringEntity entity = new StringEntity(data.toString());
+            this.post(context, "delete_client", entity);
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
     public JSONObject getResponse() {
         return this.response;
     }

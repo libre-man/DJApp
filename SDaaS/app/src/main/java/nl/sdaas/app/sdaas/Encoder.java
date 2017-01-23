@@ -35,6 +35,49 @@ public class Encoder {
         return null;
     }
 
+    public static JSONObject encodeDeleteClientMessage(int clientId) {
+        try {
+            JSONObject message = new JSONObject();
+
+            message.put("time", System.currentTimeMillis() / 1000);
+
+            JSONObject data = new JSONObject();
+            data.put("client_id", clientId);
+
+            message.put("data", data);
+
+            return message;
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
+    public static JSONObject encodeChangeClientMessage(int clientId, int year, int month, int day,
+                                                       String gender) {
+        try {
+            JSONObject message = new JSONObject();
+
+            message.put("time", System.currentTimeMillis() / 1000);
+
+            JSONObject data = new JSONObject();
+            data.put("client_id", clientId);
+            data.put("birth_year", year);
+            data.put("birth_month", month);
+            data.put("birth_day", day);
+            data.put("gender", gender);
+
+            message.put("data", data);
+
+            return message;
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
     public static JSONObject encodeJoinSessionMessage(int clientId, String code) {
         try {
             JSONObject message = new JSONObject();

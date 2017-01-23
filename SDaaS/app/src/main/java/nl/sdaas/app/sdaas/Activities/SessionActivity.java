@@ -72,7 +72,7 @@ public class SessionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.settings:
-                // GOTO SETTINGS SCREEN
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             case R.id.help:

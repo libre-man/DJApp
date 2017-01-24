@@ -16,7 +16,7 @@ import nl.sdaas.app.sdaas.R;
  */
 
 public class AboutSdaasActivity extends AppCompatActivity {
-    private String prevClass = "SessionActivity";
+    private String prevClass = "JoinSessionActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +41,7 @@ public class AboutSdaasActivity extends AppCompatActivity {
             case android.R.id.home:
                 try {
                     startActivity(new Intent(this, Class.forName(this.prevClass)));
-                } catch (ClassNotFoundException e) {
+                } catch (Exception e) {
                     startActivity(new Intent(this, JoinSessionActivity.class));
                     Log.d("ERROR:", e.toString());
                 }

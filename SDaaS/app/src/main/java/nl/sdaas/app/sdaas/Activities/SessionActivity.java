@@ -70,13 +70,15 @@ public class SessionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                Intent intent = new Intent(this, SettingsActivity.class);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intent);
                 return true;
 
             case R.id.help:
-                Intent intent = new Intent(this, AboutSdaasActivity.class);
-                intent.putExtra("caller", getIntent().getComponent().getClassName());
-                startActivity(intent);
+                Intent intentHelp = new Intent(this, AboutSdaasActivity.class);
+                intentHelp.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intentHelp);
                 return true;
 
             default:

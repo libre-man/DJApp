@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +27,7 @@ import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Server;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    private String prevClass = "JoinSessionActivity";
     private String gender = "m";
     private boolean initialLaunch = true;
 
@@ -34,7 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSettings);
         setSupportActionBar(toolbar);
-
         SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
         if (prefs.contains("client_id")) {
             this.initialLaunch = false;
@@ -49,7 +52,9 @@ public class SettingsActivity extends AppCompatActivity {
                 this.gender = "f";
             }
             ((Button)findViewById(R.id.deleteButton)).setVisibility(View.VISIBLE);
+            this.prevClass = getIntent().getStringExtra("caller");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
@@ -170,5 +175,36 @@ public class SettingsActivity extends AppCompatActivity {
         prefs.edit().clear().commit();
         finish();
         startActivity(getIntent());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                try {
+                    startActivity(new Intent(this, Class.forName(this.prevClass)));
+                } catch (Exception e) {
+                    startActivity(new Intent(this, JoinSessionActivity.class));
+                    Log.d("ERROR:", e.toString());
+                }
+                return true;
+
+            case R.id.settings_help:
+                Intent intent = new Intent(this, AboutSdaasActivity.class);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

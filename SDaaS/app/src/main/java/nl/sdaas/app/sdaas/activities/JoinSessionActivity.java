@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +28,9 @@ public class JoinSessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_session);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarJoin);
+        setSupportActionBar(toolbar);
 
         SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
 
@@ -98,6 +105,34 @@ public class JoinSessionActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.simple_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intent);
+                return true;
+
+            case R.id.simple_help:
+                Intent intentHelp = new Intent(this, AboutSdaasActivity.class);
+                intentHelp.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intentHelp);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 }

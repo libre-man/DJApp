@@ -27,8 +27,14 @@ public class JoinSessionActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
 
-        if (!prefs.contains("client_id"))
+        if (!prefs.contains("client_id")) {
             startActivity(new Intent(this, SettingsActivity.class));
+            return;
+        } else if (!checkClientId(prefs.getInt("client_id", 0))) {
+            prefs.edit().clear().commit();
+            startActivity(new Intent(this, SettingsActivity.class));
+            return;
+        }
 
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +74,30 @@ public class JoinSessionActivity extends AppCompatActivity {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private boolean checkClientId(int clientId) {
+        final JSONObject message = Encoder.encodeCheckClientMessage(clientId);
+        final Server server = ((SdaasApplication)this.getApplication()).getServer();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                server.checkClient(getApplicationContext(), message);
+            }
+        });
+
+        thread.start();
+
+        try {
+            thread.join();
+            JSONObject response = server.getResponse();
+            System.out.println(response.toString());
+            return response.optBoolean("success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

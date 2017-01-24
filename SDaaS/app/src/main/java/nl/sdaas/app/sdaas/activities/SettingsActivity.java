@@ -41,10 +41,13 @@ public class SettingsActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.dayText)).setText(Integer.toString(prefs.getInt("client_birth_day", 0)), TextView.BufferType.EDITABLE);
             ((EditText) findViewById(R.id.monthText)).setText(Integer.toString(prefs.getInt("client_birth_month", 0)), TextView.BufferType.EDITABLE);
             ((EditText) findViewById(R.id.yearText)).setText(Integer.toString(prefs.getInt("client_birth_year", 0)), TextView.BufferType.EDITABLE);
-            if (prefs.getString("client_gender", "m") == "m")
-                ((RadioButton)findViewById(R.id.maleRadioButton)).setChecked(true);
-            else
-                ((RadioButton)findViewById(R.id.femaleRadioButton)).setChecked(true);
+            if (prefs.getString("client_gender", "m") == "m") {
+                ((RadioButton) findViewById(R.id.maleRadioButton)).setChecked(true);
+                this.gender = "m";
+            } else {
+                ((RadioButton) findViewById(R.id.femaleRadioButton)).setChecked(true);
+                this.gender = "f";
+            }
             ((Button)findViewById(R.id.deleteButton)).setVisibility(View.VISIBLE);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -108,7 +111,6 @@ public class SettingsActivity extends AppCompatActivity {
                 ((EditText) findViewById(R.id.dayText)).setError("Day wrong!");
                 return;
             }
-
             editor.putInt("client_birth_day", day);
             editor.putInt("client_birth_month", month);
             editor.putInt("client_birth_year", year);
@@ -137,10 +139,10 @@ public class SettingsActivity extends AppCompatActivity {
 
             JSONObject response = server.getResponse();
 
-            if (response.getBoolean("success")) {
+            if (response.getBoolean("success") && this.initialLaunch) {
                 editor.putInt("client_id", response.getInt("client_id"));
-                editor.apply();
             }
+            editor.apply();
             if (this.initialLaunch)
                 startActivity(new Intent(this, JoinSessionActivity.class));
             else
@@ -152,19 +154,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void deletePreferences() {
-        final SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("sdaas", MODE_PRIVATE);
+        final JSONObject message = Encoder.encodeDeleteClientMessage(prefs.getInt("client_id", 0));
         final Server server = ((SdaasApplication)this.getApplication()).getServer();
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 if (!initialLaunch) {
-                    JSONObject message = Encoder.encodeDeleteClientMessage(prefs.getInt("client_id", 0));
                     server.deleteClient(getApplicationContext(), message);
                 }
             }
         });
-
+        thread.start();
         prefs.edit().clear().commit();
         finish();
         startActivity(getIntent());

@@ -54,6 +54,10 @@ public class Encoder {
         return null;
     }
 
+    public static JSONObject encodeCheckClientMessage(int clientId) {
+        return encodeDeleteClientMessage(clientId);
+    }
+
     public static JSONObject encodeChangeClientMessage(int clientId, int year, int month, int day,
                                                        String gender) {
         try {

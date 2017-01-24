@@ -71,6 +71,15 @@ public class Server {
         }
     }
 
+    public void checkClient(Context context, JSONObject data) {
+        try {
+            StringEntity entity = new StringEntity(data.toString());
+            this.post(context, "check_client", entity);
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
     public JSONObject getResponse() {
         return this.response;
     }
@@ -83,7 +92,10 @@ public class Server {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Server.this.response = response;
             }
-
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable throwable) {
+                System.out.println("Great failure! " + statusCode + errorResponse);
+            }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 System.out.println("Great failure! " + statusCode);

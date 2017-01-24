@@ -9,13 +9,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -76,7 +74,9 @@ public class SessionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.help:
-                // GOTO SETTINGS SCREEN
+                Intent intent = new Intent(this, AboutSdaasActivity.class);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                startActivity(intent);
                 return true;
 
             default:

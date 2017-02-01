@@ -90,7 +90,7 @@ public class Encoder {
 
             JSONObject data = new JSONObject();
             data.put("client_id", clientId);
-            data.put("session_id", Integer.parseInt(code));
+            data.put("session_id", code);
 
             message.put("data", data);
 

@@ -14,13 +14,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import nl.sdaas.app.sdaas.ChannelAdapter;
 import nl.sdaas.app.sdaas.Encoder;
+import nl.sdaas.app.sdaas.Logger;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Server;
@@ -43,6 +47,29 @@ public class SessionActivity extends AppCompatActivity {
 
         Intent startIntent = new Intent(this, SdaasService.class);
         bindService(startIntent, connection, Context.BIND_AUTO_CREATE);
+
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1500);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Button pauseButton = (Button) findViewById(R.id.pauseButton);
+                                String buttonText = " Current: ";
+                                buttonText += getSession().getChannel(getLogger().getCurrentChannel()).getName();
+                                pauseButton.setText(buttonText);
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 
     @Override
@@ -60,6 +87,8 @@ public class SessionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        ArrayList<String> classStack;
         switch (item.getItemId()) {
             case R.id.refresh:
                 refreshAction();
@@ -70,15 +99,19 @@ public class SessionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                intent = new Intent(this, SettingsActivity.class);
+                classStack = new ArrayList<>();
+                classStack.add(getIntent().getComponent().getClassName());
+                intent.putExtra("caller", classStack);
                 startActivity(intent);
                 return true;
 
             case R.id.help:
-                Intent intentHelp = new Intent(this, AboutSdaasActivity.class);
-                intentHelp.putExtra("caller", getIntent().getComponent().getClassName());
-                startActivity(intentHelp);
+                intent = new Intent(this, AboutSdaasActivity.class);
+                classStack = new ArrayList<>();
+                classStack.add(getIntent().getComponent().getClassName());
+                intent.putExtra("caller", classStack);
+                startActivity(intent);
                 return true;
 
             default:
@@ -140,6 +173,14 @@ public class SessionActivity extends AppCompatActivity {
 
         return null;
     }
+
+    private Logger getLogger() {
+        if (this.bound)
+            return service.getLogger();
+
+        return null;
+    }
+
     private void unbindService() {
         if (this.bound) {
             unbindService(connection);

@@ -16,6 +16,8 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import nl.sdaas.app.sdaas.Encoder;
 import nl.sdaas.app.sdaas.R;
 import nl.sdaas.app.sdaas.SdaasApplication;
@@ -70,6 +72,7 @@ public class JoinSessionActivity extends AppCompatActivity {
         try {
             thread.join();
             JSONObject response = server.getResponse();
+
             if (response.optBoolean("success")) {
                 Intent intent = new Intent(this, SdaasService.class);
                 intent.putExtra("initial_data", response.toString());
@@ -117,17 +120,23 @@ public class JoinSessionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        ArrayList<String> classStack;
         switch (item.getItemId()) {
             case R.id.simple_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                intent = new Intent(this, SettingsActivity.class);
+                classStack = new ArrayList<>();
+                classStack.add(getIntent().getComponent().getClassName());
+                intent.putExtra("caller", classStack);
                 startActivity(intent);
                 return true;
 
             case R.id.simple_help:
-                Intent intentHelp = new Intent(this, AboutSdaasActivity.class);
-                intentHelp.putExtra("caller", getIntent().getComponent().getClassName());
-                startActivity(intentHelp);
+                intent = new Intent(this, AboutSdaasActivity.class);
+                classStack = new ArrayList<>();
+                classStack.add(getIntent().getComponent().getClassName());
+                intent.putExtra("caller", classStack);
+                startActivity(intent);
                 return true;
 
             default:

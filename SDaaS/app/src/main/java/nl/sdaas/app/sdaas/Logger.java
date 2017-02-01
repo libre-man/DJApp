@@ -93,6 +93,8 @@ public class Logger implements SensorEventListener{
         return;
     }
 
+    public int getCurrentChannel() { return this.currentChannel; }
+
     public void onDestroy() {
         if (this.accelerometer != null) {
             this.manager.unregisterListener(this, accelerometer);

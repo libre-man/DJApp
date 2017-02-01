@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import nl.sdaas.app.sdaas.R;
 
 /**
@@ -16,12 +18,13 @@ import nl.sdaas.app.sdaas.R;
  */
 
 public class AboutSdaasActivity extends AppCompatActivity {
-    private String prevClass = "JoinSessionActivity";
+    private ArrayList<String> classStack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_sdaas);
-        this.prevClass = getIntent().getStringExtra("caller");
+        this.classStack = getIntent().getStringArrayListExtra("caller");
 
         TextView about = (TextView)findViewById(R.id.about_sdaas);
         about.setText(Html.fromHtml("<center><strong><h2>sdaas: silent disco as a service</h2></strong></center><br>" +
@@ -40,9 +43,11 @@ public class AboutSdaasActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 try {
-                    startActivity(new Intent(this, Class.forName(this.prevClass)));
+                    Intent intent = new Intent(this, Class.forName(this.classStack.get(classStack.size() - 1)));
+                    this.classStack.remove(classStack.size() - 1);
+                    intent.putExtra("caller", this.classStack);
+                    startActivity(intent);
                 } catch (Exception e) {
-                    startActivity(new Intent(this, JoinSessionActivity.class));
                     Log.d("ERROR:", e.toString());
                 }
                 return true;

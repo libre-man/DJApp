@@ -28,11 +28,11 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:ems="10"
         android:id="@+id/editText"
         android:textAlignment="center"
         android:hint="Session code"
         android:layout_below="@+id/toolbarJoin"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:inputType="textNoSuggestions" />
 </RelativeLayout>

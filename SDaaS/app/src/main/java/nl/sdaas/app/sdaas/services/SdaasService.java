@@ -47,8 +47,14 @@ public class SdaasService extends Service {
             }
             if (intent.getIntExtra("channel", -1) >= 0) {
                 this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
+                this.streamer = new Streamer("0.nl.pool.ntp.org",
+                                             this.session.getChannel(this.logger.getCurrentChannel()),
+                                                                     this.session.getStart(), 30041);
             } else if (intent.getBooleanExtra("nextChannel", false)) {
                 this.logger.nextChannel();
+                this.streamer = new Streamer("0.nl.pool.ntp.org",
+                                             this.session.getChannel(this.logger.getCurrentChannel()),
+                                                                     this.session.getStart(), 30041);
             }
         }
 
@@ -134,6 +140,8 @@ public class SdaasService extends Service {
     public Session getSession() {
         return this.session;
     }
+
+    public Logger getLogger() {return this.logger; }
 
     @Nullable
     @Override

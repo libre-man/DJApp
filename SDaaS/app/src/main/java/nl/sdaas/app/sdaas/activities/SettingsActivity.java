@@ -18,7 +18,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import nl.sdaas.app.sdaas.Encoder;
@@ -27,9 +27,10 @@ import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Server;
 
 public class SettingsActivity extends AppCompatActivity {
-    private String prevClass = "JoinSessionActivity";
+    //private String prevClass = "JoinSessionActivity";
     private String gender = "m";
     private boolean initialLaunch = true;
+    private ArrayList<String> classStack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
                 this.gender = "f";
             }
             ((Button)findViewById(R.id.deleteButton)).setVisibility(View.VISIBLE);
-            this.prevClass = getIntent().getStringExtra("caller");
+            this.classStack = getIntent().getStringArrayListExtra("caller");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
@@ -189,16 +190,19 @@ public class SettingsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 try {
-                    startActivity(new Intent(this, Class.forName(this.prevClass)));
+                    Intent intent = new Intent(this, Class.forName(this.classStack.get(classStack.size() - 1)));
+                    this.classStack.remove(classStack.size() - 1);
+                    intent.putExtra("caller", this.classStack);
+                    startActivity(intent);
                 } catch (Exception e) {
-                    startActivity(new Intent(this, JoinSessionActivity.class));
                     Log.d("ERROR:", e.toString());
                 }
                 return true;
 
             case R.id.settings_help:
                 Intent intent = new Intent(this, AboutSdaasActivity.class);
-                intent.putExtra("caller", getIntent().getComponent().getClassName());
+                classStack.add(getIntent().getComponent().getClassName());
+                intent.putExtra("caller", this.classStack);
                 startActivity(intent);
                 return true;
 

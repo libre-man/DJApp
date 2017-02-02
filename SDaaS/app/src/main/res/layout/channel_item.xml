@@ -4,8 +4,11 @@
     android:id="@+id/channelTextView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layout_centerInParent="true"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
     android:padding="10dip"
-    android:textSize="16sp"
+    android:textSize="20sp"
     android:textStyle="bold"
     android:height="100dp">
 </TextView>

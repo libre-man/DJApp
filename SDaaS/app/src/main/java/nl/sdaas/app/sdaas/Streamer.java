@@ -15,6 +15,8 @@ import static nl.sdaas.app.sdaas.NtpUtils.getTimeInfo;
 public class Streamer {
     private final static String TAG = Streamer.class.getName();
 
+    private Boolean empty = false;
+
     private Channel currentChannel;
     private int currentPart;
 
@@ -22,6 +24,10 @@ public class Streamer {
     private MediaPlayer nextPlayer;
 
 //    private Runnable runnable;
+
+    public Streamer() {
+        this.empty = true;
+    }
 
     public Streamer(String ntpHost, Channel channel, final long start, final long partDuration) {
         System.out.println("Streamer setting up!");
@@ -36,11 +42,12 @@ public class Streamer {
 
         /* Apply offset from NTP server. */
         final long offset = ntpInfo.getOffset();
+        Log.d(TAG, Long.toString(offset));
 
         final long current = System.currentTimeMillis() + ntpInfo.getOffset();
-        this.currentPart = (int)((current - start * 1000) / partDuration);
+        this.currentPart = (int)((current - start) / partDuration);
         Log.d(TAG, Integer.toString(this.currentPart) + " PART!");
-        Log.d(TAG, Long.toString(start * 1000) + " START!");
+        Log.d(TAG, Long.toString(start) + " START!");
         Log.d(TAG, Long.toString(current) + " CURRENT!");
         final int seekPart = currentPart;
 
@@ -69,7 +76,8 @@ public class Streamer {
         this.currentPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer player) {
-                int seekto = (int)((System.currentTimeMillis() + offset) - start - (seekPart * player.getDuration()));
+                int seekto = (int)((System.currentTimeMillis() + offset) - start - (seekPart * partDuration));
+                Log.d(TAG, Integer.toString(seekto));
                 player.seekTo(seekto);
             }
         });
@@ -138,8 +146,10 @@ public class Streamer {
     }
 
     public void release() {
-        this.currentPlayer.release();
-        this.nextPlayer.release();
+        if (!empty) {
+            this.currentPlayer.release();
+            this.nextPlayer.release();
+        }
     }
 
 }

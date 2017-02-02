@@ -19,7 +19,7 @@ import nl.sdaas.app.sdaas.Streamer;
 
 public class SdaasService extends Service {
     private final static String TAG = SdaasService.class.getName();
-    private final static int PART_DURATION = 30041;
+    private final static int PART_DURATION = 30093;
     /* Binder for binding this service. */
     private final IBinder sdaasBinder = new SdaasBinder();
 
@@ -95,7 +95,7 @@ public class SdaasService extends Service {
     }
 
     private void setupStreamer() {
-        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), this.session.getChannel(0).getStart(), PART_DURATION);
+        this.streamer = new Streamer();
     }
 
     /**

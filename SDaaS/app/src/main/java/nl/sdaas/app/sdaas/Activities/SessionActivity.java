@@ -77,10 +77,12 @@ public class SessionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
+                this.service.releaseStream();
                 refreshAction();
                 return true;
 
             case R.id.back:
+                this.service.releaseStream();
                 startActivity(new Intent(this, JoinSessionActivity.class));
                 return true;
 

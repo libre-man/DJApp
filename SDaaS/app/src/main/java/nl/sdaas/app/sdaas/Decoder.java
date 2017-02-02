@@ -25,7 +25,7 @@ public class Decoder {
                     System.out.println(channel.toString());
                     session.addChannel(channel.getString("color"), channel.getInt("channel_id"),
                                        channel.getString("url"), channel.getString("name"),
-                                       channel.getLong("start"));
+                                       channel.getLong("start") * 1000);
                 }
                 return session;
             }

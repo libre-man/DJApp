@@ -77,7 +77,7 @@ public class Streamer {
             public void onPrepared(MediaPlayer player) {
 
                 int seekto = (int)((System.currentTimeMillis() + offset) - start - (seekPart * partDuration));
-                seekto = (int)(seekto * (player.getDuration() / partDuration));
+                seekto = (int)((seekto * player.getDuration()) / partDuration);
                 Log.d(TAG, "seekto: " + Integer.toString(seekto));
                 Log.d(TAG, "duration: " + Integer.toString(player.getDuration()));
 

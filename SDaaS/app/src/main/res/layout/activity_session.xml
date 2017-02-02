@@ -42,7 +42,7 @@
         />
 
     <Button
-        android:text=" Channel: "
+        android:text=" Channel: None"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/pauseButton"

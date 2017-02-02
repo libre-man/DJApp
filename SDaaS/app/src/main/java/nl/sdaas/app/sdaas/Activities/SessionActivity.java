@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,28 +49,14 @@ public class SessionActivity extends AppCompatActivity {
         Intent startIntent = new Intent(this, SdaasService.class);
         bindService(startIntent, connection, Context.BIND_AUTO_CREATE);
 
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1500);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Button pauseButton = (Button) findViewById(R.id.pauseButton);
-                                String buttonText = " Current: ";
-                                buttonText += getSession().getChannel(getLogger().getCurrentChannel()).getName();
-                                pauseButton.setText(buttonText);
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                }
+        Button button = (Button) findViewById(R.id.pauseButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                service.releaseStream();
+                Button pauseButton = (Button) findViewById(R.id.pauseButton);
+                pauseButton.setText(" Current: None");
             }
-        };
-
-        t.start();
+        });
     }
 
     @Override
@@ -82,13 +69,12 @@ public class SessionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        this.service.releaseStream();
         unbindService();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        ArrayList<String> classStack;
         switch (item.getItemId()) {
             case R.id.refresh:
                 refreshAction();
@@ -96,22 +82,6 @@ public class SessionActivity extends AppCompatActivity {
 
             case R.id.back:
                 startActivity(new Intent(this, JoinSessionActivity.class));
-                return true;
-
-            case R.id.settings:
-                intent = new Intent(this, SettingsActivity.class);
-                classStack = new ArrayList<>();
-                classStack.add(getIntent().getComponent().getClassName());
-                intent.putExtra("caller", classStack);
-                startActivity(intent);
-                return true;
-
-            case R.id.help:
-                intent = new Intent(this, AboutSdaasActivity.class);
-                classStack = new ArrayList<>();
-                classStack.add(getIntent().getComponent().getClassName());
-                intent.putExtra("caller", classStack);
-                startActivity(intent);
                 return true;
 
             default:
@@ -156,6 +126,10 @@ public class SessionActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     SessionActivity.this.service.setChannel(position);
+                    Button pauseButton = (Button) findViewById(R.id.pauseButton);
+                    String buttonText = " Current: ";
+                    buttonText += getSession().getChannel(getLogger().getCurrentChannel()).getName();
+                    pauseButton.setText(buttonText);
                 }
             });
         }

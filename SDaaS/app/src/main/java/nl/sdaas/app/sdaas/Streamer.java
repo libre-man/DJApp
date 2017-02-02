@@ -16,29 +16,32 @@ public class Streamer {
     private final static String TAG = Streamer.class.getName();
 
     private Channel currentChannel;
-    private long partDuration;
     private int currentPart;
 
     private MediaPlayer currentPlayer;
     private MediaPlayer nextPlayer;
 
+//    private Runnable runnable;
+
     public Streamer(String ntpHost, Channel channel, final long start, final long partDuration) {
+        System.out.println("Streamer setting up!");
         this.currentChannel = channel;
-        this.partDuration = partDuration;
 
         // TODO: this is a hack, please fix getting time info asynchronously!!
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        TimeInfo ntpInfo = getTimeInfo("0.nl.pool.ntp.org");
+        TimeInfo ntpInfo = getTimeInfo(ntpHost);
         ntpInfo.computeDetails();
 
         /* Apply offset from NTP server. */
         final long offset = ntpInfo.getOffset();
 
         final long current = System.currentTimeMillis() + ntpInfo.getOffset();
-        this.currentPart = (int)((current - start) / partDuration);
-
+        this.currentPart = (int)((current - start * 1000) / partDuration);
+        System.out.println(Integer.toString(this.currentPart) + " PART!");
+        System.out.println(Long.toString(start * 1000) + " START!");
+        System.out.println(Long.toString(current) + " CURRENT!");
         final int seekPart = currentPart;
 
         this.currentPlayer = new MediaPlayer();
@@ -52,7 +55,6 @@ public class Streamer {
         try {
             this.currentPlayer.setDataSource(channel.getChannelUrl() + "/part" + this.currentPart + ".mp3");
             this.currentPlayer.prepareAsync();
-
 
             this.currentPart++;
 
@@ -81,23 +83,23 @@ public class Streamer {
 
         setNextPlayerListener();
 
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            int previousPos = -1;
-
-            public void run() {
-                if (currentPlayer.isPlaying()) {
-                    if (currentPlayer.getCurrentPosition() == previousPos) {
-                        // Detected stall -> restart player.
-                    }
-                    previousPos = currentPlayer.getCurrentPosition();
-                }
-
-                handler.postDelayed(this, 2500);
-            }
-        };
-
-        runnable.run();
+//        final Handler handler = new Handler();
+//         this.runnable = new Runnable() {
+//            int previousPos = -1;
+//
+//            public void run() {
+//                if (currentPlayer.isPlaying()) {
+//                    if (currentPlayer.getCurrentPosition() == previousPos) {
+//                        // Detected stall -> restart player.
+//                    }
+//                    previousPos = currentPlayer.getCurrentPosition();
+//                }
+//
+//                handler.postDelayed(this, 2500);
+//            }
+//        };
+//
+//        this.runnable.run();
     }
 
     private void setOnCompletionListener() {
@@ -111,6 +113,8 @@ public class Streamer {
                 nextPlayer = new MediaPlayer();
                 nextPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 currentPart++;
+
+                System.out.println(Integer.toString(currentPart) + "PART!");
 
                 try {
                     nextPlayer.setDataSource(currentChannel.getChannelUrl() + "/part" + currentPart + ".mp3");
@@ -131,6 +135,11 @@ public class Streamer {
                 currentPlayer.setNextMediaPlayer(player);
             }
         });
+    }
+
+    public void release() {
+        this.currentPlayer.release();
+        this.nextPlayer.release();
     }
 
 }

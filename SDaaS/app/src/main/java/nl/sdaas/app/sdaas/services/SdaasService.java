@@ -19,6 +19,7 @@ import nl.sdaas.app.sdaas.Streamer;
 
 public class SdaasService extends Service {
     private final static String TAG = SdaasService.class.getName();
+    private final static int PART_DURATION = 30041;
     /* Binder for binding this service. */
     private final IBinder sdaasBinder = new SdaasBinder();
 
@@ -32,6 +33,7 @@ public class SdaasService extends Service {
     public void onDestroy() {
         logger.onDestroy();
         this.mediaSession.release();
+        this.streamer.release();
         super.onDestroy();
     }
 
@@ -49,12 +51,12 @@ public class SdaasService extends Service {
                 this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
                 this.streamer = new Streamer("0.nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
-                                                                     this.session.getStart(), 30041);
+                                             this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
             } else if (intent.getBooleanExtra("nextChannel", false)) {
                 this.logger.nextChannel();
                 this.streamer = new Streamer("0.nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
-                                                                     this.session.getStart(), 30041);
+                                             this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
             }
         }
 
@@ -69,6 +71,12 @@ public class SdaasService extends Service {
 
     public void setChannel(int channel) {
         this.logger.setCurrentChannel(channel);
+        this.streamer.release();
+        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(channel), this.session.getChannel(channel).getStart(), PART_DURATION);
+    }
+
+    public void releaseStream() {
+        this.streamer.release();
     }
 
     /**
@@ -87,7 +95,7 @@ public class SdaasService extends Service {
     }
 
     private void setupStreamer() {
-        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), this.session.getStart(), 30041);
+        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(0), this.session.getChannel(0).getStart(), PART_DURATION);
     }
 
     /**

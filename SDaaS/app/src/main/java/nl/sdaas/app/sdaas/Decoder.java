@@ -16,9 +16,7 @@ public class Decoder {
             JSONObject sessionInfo = new JSONObject(jsonString);
 
             if (sessionInfo.getBoolean("success")) {
-                Session session = new Session(sessionInfo.getString("session_name"),
-                                              sessionInfo.getLong("session_start"),
-                                              joinCode);
+                Session session = new Session(sessionInfo.getString("session_name"), joinCode);
 
                 /* Get the channels in the session. */
                 JSONArray channels = sessionInfo.getJSONArray("channels");
@@ -26,7 +24,8 @@ public class Decoder {
                     JSONObject channel = channels.getJSONObject(i);
                     System.out.println(channel.toString());
                     session.addChannel(channel.getString("color"), channel.getInt("channel_id"),
-                                       channel.getString("url"), channel.getString("name"));
+                                       channel.getString("url"), channel.getString("name"),
+                                       channel.getLong("start"));
                 }
                 return session;
             }

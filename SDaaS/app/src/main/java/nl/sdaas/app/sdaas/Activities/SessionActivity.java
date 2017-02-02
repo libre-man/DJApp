@@ -57,6 +57,37 @@ public class SessionActivity extends AppCompatActivity {
                 pauseButton.setText(" Current: None");
             }
         });
+
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(2000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Button pauseButton = (Button) findViewById(R.id.pauseButton);
+                                String buttonText = " Current: ";
+                                if (!service.getStreamer().isEmpty())
+                                    if (getLogger() != null)
+                                        buttonText += getSession().getChannel(getLogger().getCurrentChannel()).getName();
+                                    else
+                                        buttonText += "None";
+                                else
+                                    buttonText += "None";
+                                pauseButton.setText(buttonText);
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
+
     }
 
     @Override

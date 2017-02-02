@@ -49,12 +49,12 @@ public class SdaasService extends Service {
             }
             if (intent.getIntExtra("channel", -1) >= 0) {
                 this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
-                this.streamer = new Streamer("0.nl.pool.ntp.org",
+                this.streamer = new Streamer("nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
                                              this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
             } else if (intent.getBooleanExtra("nextChannel", false)) {
                 this.logger.nextChannel();
-                this.streamer = new Streamer("0.nl.pool.ntp.org",
+                this.streamer = new Streamer("nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
                                              this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
             }
@@ -66,17 +66,18 @@ public class SdaasService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        //setUpMediaButtonReceiver();
+        setUpMediaButtonReceiver();
     }
 
     public void setChannel(int channel) {
         this.logger.setCurrentChannel(channel);
         this.streamer.release();
-        this.streamer = new Streamer("0.nl.pool.ntp.org", this.session.getChannel(channel), this.session.getChannel(channel).getStart(), PART_DURATION);
+        this.streamer = new Streamer("nl.pool.ntp.org", this.session.getChannel(channel), this.session.getChannel(channel).getStart(), PART_DURATION);
     }
 
     public void releaseStream() {
         this.streamer.release();
+        this.streamer = new Streamer();
     }
 
     /**
@@ -115,6 +116,7 @@ public class SdaasService extends Service {
 
                     if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
                         SdaasService.this.logger.nextChannel();
+                        SdaasService.this.setChannel(SdaasService.this.logger.getCurrentChannel());
                     }
                 }
 
@@ -149,7 +151,9 @@ public class SdaasService extends Service {
         return this.session;
     }
 
-    public Logger getLogger() {return this.logger; }
+    public Logger getLogger() { return this.logger; }
+
+    public Streamer getStreamer() { return this.streamer; }
 
     @Nullable
     @Override

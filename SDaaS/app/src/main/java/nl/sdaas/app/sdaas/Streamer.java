@@ -29,11 +29,10 @@ public class Streamer {
         this.empty = true;
     }
 
-    public Streamer(String ntpHost, Channel channel, final long start, final long partDuration) {
+    public Streamer(final String ntpHost, Channel channel, final long start, final long partDuration) {
         System.out.println("Streamer setting up!");
         this.currentChannel = channel;
 
-        // TODO: this is a hack, please fix getting time info asynchronously!!
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -76,9 +75,18 @@ public class Streamer {
         this.currentPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer player) {
+
                 int seekto = (int)((System.currentTimeMillis() + offset) - start - (seekPart * partDuration));
-                Log.d(TAG, Integer.toString(seekto));
-                player.seekTo(seekto);
+                seekto = (int)(seekto * (player.getDuration() / partDuration));
+                Log.d(TAG, "seekto: " + Integer.toString(seekto));
+                Log.d(TAG, "duration: " + Integer.toString(player.getDuration()));
+
+                if (seekto > partDuration - 5000) {
+                    release();
+                    empty = true;
+                } else {
+                    player.seekTo(seekto);
+                }
             }
         });
 
@@ -90,24 +98,6 @@ public class Streamer {
         });
 
         setNextPlayerListener();
-
-//        final Handler handler = new Handler();
-//         this.runnable = new Runnable() {
-//            int previousPos = -1;
-//
-//            public void run() {
-//                if (currentPlayer.isPlaying()) {
-//                    if (currentPlayer.getCurrentPosition() == previousPos) {
-//                        // Detected stall -> restart player.
-//                    }
-//                    previousPos = currentPlayer.getCurrentPosition();
-//                }
-//
-//                handler.postDelayed(this, 2500);
-//            }
-//        };
-//
-//        this.runnable.run();
     }
 
     private void setOnCompletionListener() {
@@ -137,12 +127,16 @@ public class Streamer {
     }
 
     private void setNextPlayerListener() {
-        this.nextPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer player) {
-                currentPlayer.setNextMediaPlayer(player);
-            }
-        });
+        try {
+            this.nextPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer player) {
+                    currentPlayer.setNextMediaPlayer(player);
+                }
+            });
+        } catch(Exception ex) {
+            Log.d(TAG, ex.getStackTrace().toString());
+        }
     }
 
     public void release() {
@@ -151,5 +145,7 @@ public class Streamer {
             this.nextPlayer.release();
         }
     }
+
+    public Boolean isEmpty() { return this.empty; }
 
 }

@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -120,22 +121,14 @@ public class JoinSessionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        ArrayList<String> classStack;
         switch (item.getItemId()) {
             case R.id.simple_settings:
-                intent = new Intent(this, SettingsActivity.class);
-                classStack = new ArrayList<>();
-                classStack.add(getIntent().getComponent().getClassName());
-                intent.putExtra("caller", classStack);
-                startActivity(intent);
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             case R.id.simple_help:
-                intent = new Intent(this, AboutSdaasActivity.class);
-                classStack = new ArrayList<>();
-                classStack.add(getIntent().getComponent().getClassName());
-                intent.putExtra("caller", classStack);
+                Intent intent = new Intent(this, AboutSdaasActivity.class);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
                 startActivity(intent);
                 return true;
 

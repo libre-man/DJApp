@@ -18,13 +18,13 @@ import nl.sdaas.app.sdaas.R;
  */
 
 public class AboutSdaasActivity extends AppCompatActivity {
-    private ArrayList<String> classStack;
+    private String caller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_sdaas);
-        this.classStack = getIntent().getStringArrayListExtra("caller");
+        this.caller = getIntent().getStringExtra("caller");
 
         TextView about = (TextView)findViewById(R.id.about_sdaas);
         about.setText(Html.fromHtml("<center><strong><h2>sdaas: silent disco as a service</h2></strong></center><br>" +
@@ -43,10 +43,7 @@ public class AboutSdaasActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 try {
-                    Intent intent = new Intent(this, Class.forName(this.classStack.get(classStack.size() - 1)));
-                    this.classStack.remove(classStack.size() - 1);
-                    intent.putExtra("caller", this.classStack);
-                    startActivity(intent);
+                    startActivity(new Intent(this, Class.forName(this.caller)));
                 } catch (Exception e) {
                     Log.d("ERROR:", e.toString());
                 }

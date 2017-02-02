@@ -27,10 +27,8 @@ import nl.sdaas.app.sdaas.SdaasApplication;
 import nl.sdaas.app.sdaas.Server;
 
 public class SettingsActivity extends AppCompatActivity {
-    //private String prevClass = "JoinSessionActivity";
     private String gender = "m";
     private boolean initialLaunch = true;
-    private ArrayList<String> classStack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.dayText)).setText(Integer.toString(prefs.getInt("client_birth_day", 0)), TextView.BufferType.EDITABLE);
             ((EditText) findViewById(R.id.monthText)).setText(Integer.toString(prefs.getInt("client_birth_month", 0)), TextView.BufferType.EDITABLE);
             ((EditText) findViewById(R.id.yearText)).setText(Integer.toString(prefs.getInt("client_birth_year", 0)), TextView.BufferType.EDITABLE);
-            if (prefs.getString("client_gender", "m") == "m") {
+            if (prefs.getString("client_gender", "x").equals("m")) {
                 ((RadioButton) findViewById(R.id.maleRadioButton)).setChecked(true);
                 this.gender = "m";
             } else {
@@ -53,7 +51,6 @@ public class SettingsActivity extends AppCompatActivity {
                 this.gender = "f";
             }
             ((Button)findViewById(R.id.deleteButton)).setVisibility(View.VISIBLE);
-            this.classStack = getIntent().getStringArrayListExtra("caller");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
@@ -149,11 +146,7 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putInt("client_id", response.getInt("client_id"));
             }
             editor.apply();
-            if (this.initialLaunch)
-                startActivity(new Intent(this, JoinSessionActivity.class));
-            else
-                startActivity(new Intent(this, SessionActivity.class));
-
+            startActivity(new Intent(this, JoinSessionActivity.class));
         } catch (NullPointerException|InterruptedException|JSONException e) {
             e.printStackTrace();
         }
@@ -189,20 +182,12 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                try {
-                    Intent intent = new Intent(this, Class.forName(this.classStack.get(classStack.size() - 1)));
-                    this.classStack.remove(classStack.size() - 1);
-                    intent.putExtra("caller", this.classStack);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    Log.d("ERROR:", e.toString());
-                }
+                startActivity(new Intent(this, JoinSessionActivity.class));
                 return true;
 
             case R.id.settings_help:
                 Intent intent = new Intent(this, AboutSdaasActivity.class);
-                classStack.add(getIntent().getComponent().getClassName());
-                intent.putExtra("caller", this.classStack);
+                intent.putExtra("caller", getIntent().getComponent().getClassName());
                 startActivity(intent);
                 return true;
 

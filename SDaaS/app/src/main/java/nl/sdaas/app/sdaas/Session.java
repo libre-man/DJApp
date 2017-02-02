@@ -6,13 +6,11 @@ public class Session {
     private ArrayList<Channel> channels;
     private String name;
     private long partDuration = 30041;
-    private long start;
     private String joinCode;
 
-    public Session(String name, long start, String joinCode) {
+    public Session(String name, String joinCode) {
         this.name = name;
         this.channels = new ArrayList<>();
-        this.start = start;
         this.joinCode = joinCode;
     }
 
@@ -23,15 +21,13 @@ public class Session {
      * @param channelUrl: The URL of the stream of the channel to add.
      * @param name: The name of the session.
      */
-    public void addChannel(String color, int channelId, String channelUrl, String name) {
-        channels.add(new Channel(color, channelId, channelUrl, name));
+    public void addChannel(String color, int channelId, String channelUrl, String name, long start) {
+        channels.add(new Channel(color, channelId, channelUrl, name, start));
     }
 
     public String getName() {
         return this.name;
     }
-
-    public long getStart() { return this.start; }
 
     public int getAmountOfChannels() {
         return this.channels.size();

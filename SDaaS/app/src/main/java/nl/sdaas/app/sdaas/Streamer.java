@@ -22,9 +22,10 @@ public class Streamer {
     private MediaPlayer currentPlayer;
     private MediaPlayer nextPlayer;
 
-    public Streamer(String ntpHost, Channel channel, final long start, final long partDuration) {
+    public Streamer(String ntpHost, Channel channel, final long partDuration) {
         this.currentChannel = channel;
         this.partDuration = partDuration;
+        final long start = channel.getStart();
 
         // TODO: this is a hack, please fix getting time info asynchronously!!
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

@@ -8,12 +8,14 @@ public class Channel {
     private int channelId;
     private String channelUrl;
     private String name;
+    private long start;
 
-    public Channel(String color, int channel_id, String channel_url, String name) {
+    public Channel(String color, int channel_id, String channel_url, String name, long start) {
         this.color = color;
         this.channelId = channel_id;
         this.channelUrl = channel_url;
         this.name = name;
+        this.start = start;
     }
 
     public int getColor() {
@@ -29,4 +31,6 @@ public class Channel {
     }
 
     public String getName() {return this.name; }
+
+    public long getStart() { return this.start; }
 }

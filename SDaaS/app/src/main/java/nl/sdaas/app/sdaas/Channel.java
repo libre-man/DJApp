@@ -33,4 +33,5 @@ public class Channel {
     public long getStart() { return this.start; }
 
     public String getName() {return this.name; }
+
 }

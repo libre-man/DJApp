@@ -39,9 +39,9 @@ public class Streamer {
 
         final long current = System.currentTimeMillis() + ntpInfo.getOffset();
         this.currentPart = (int)((current - start * 1000) / partDuration);
-        System.out.println(Integer.toString(this.currentPart) + " PART!");
-        System.out.println(Long.toString(start * 1000) + " START!");
-        System.out.println(Long.toString(current) + " CURRENT!");
+        Log.d(TAG, Integer.toString(this.currentPart) + " PART!");
+        Log.d(TAG, Long.toString(start * 1000) + " START!");
+        Log.d(TAG, Long.toString(current) + " CURRENT!");
         final int seekPart = currentPart;
 
         this.currentPlayer = new MediaPlayer();

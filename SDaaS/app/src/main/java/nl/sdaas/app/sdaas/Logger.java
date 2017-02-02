@@ -1,6 +1,7 @@
 package nl.sdaas.app.sdaas;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Logger implements SensorEventListener{
     private final static String TAG = Logger.class.getName();
     private final static int INTERVAL = 5000;
@@ -26,6 +29,7 @@ public class Logger implements SensorEventListener{
     private boolean isRunning = true;
     private Context context;
     private Server server;
+    private String client_id;
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
@@ -39,6 +43,8 @@ public class Logger implements SensorEventListener{
             this.manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
         this.server = server;
+        SharedPreferences prefs = this.context.getSharedPreferences("sdaas", MODE_PRIVATE);
+        this.client_id = Integer.toString(prefs.getInt("client_id", -1));
     }
 
     public void setCurrentChannel(int channelIndex) {
@@ -54,8 +60,7 @@ public class Logger implements SensorEventListener{
     public void intervalLogger() {
         while (this.isRunning) {
             HashMap data = new HashMap<String, String>();
-            data.put("client_id", "0");
-            data.put("session_id", "0");
+            data.put("client_id", client_id);
             data.put("channel_id", Integer.toString(currentChannel));
 
             this.server.logData(this.context, Encoder.encodeDataLogMessage(data));

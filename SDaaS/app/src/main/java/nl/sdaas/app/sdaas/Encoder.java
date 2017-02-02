@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class Encoder {
     private final static String TAG = Encoder.class.getName();
-    private final static String[] REQUIRED_KEYS = {"client_id", "session_id", "channel_id"};
+    private final static String[] REQUIRED_KEYS = {"client_id", "channel_id"};
 
     public static JSONObject encodeNewClientMessage(int year, int month, int day, String gender) {
         try {

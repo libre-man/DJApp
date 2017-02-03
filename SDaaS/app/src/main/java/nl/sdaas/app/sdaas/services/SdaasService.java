@@ -48,12 +48,12 @@ public class SdaasService extends Service {
                 setupStreamer();
             }
             if (intent.getIntExtra("channel", -1) >= 0) {
-                this.logger.setCurrentChannel(intent.getIntExtra("channel", -1));
+                this.logger.setCurrentChannel(intent.getIntExtra("channel", 0), this.session.getChannel(intent.getIntExtra("channel", 0)).getChannelId());
                 this.streamer = new Streamer("nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
                                              this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
             } else if (intent.getBooleanExtra("nextChannel", false)) {
-                this.logger.nextChannel();
+                this.logger.nextChannel(this.session.getChannels());
                 this.streamer = new Streamer("nl.pool.ntp.org",
                                              this.session.getChannel(this.logger.getCurrentChannel()),
                                              this.session.getChannel(this.logger.getCurrentChannel()).getStart(), PART_DURATION);
@@ -70,7 +70,7 @@ public class SdaasService extends Service {
     }
 
     public void setChannel(int channel) {
-        this.logger.setCurrentChannel(channel);
+        this.logger.setCurrentChannel(channel, this.session.getChannel(channel).getChannelId());
         this.streamer.release();
         this.streamer = new Streamer("nl.pool.ntp.org", this.session.getChannel(channel), this.session.getChannel(channel).getStart(), PART_DURATION);
     }
@@ -115,7 +115,7 @@ public class SdaasService extends Service {
                     KeyEvent event = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
 
                     if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
-                        SdaasService.this.logger.nextChannel();
+                        SdaasService.this.logger.nextChannel(session.getChannels());
                         SdaasService.this.setChannel(SdaasService.this.logger.getCurrentChannel());
                     }
                 }

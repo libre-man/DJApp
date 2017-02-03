@@ -40,6 +40,8 @@ public class Session {
             return this.channels.get(index);
     }
 
+    public ArrayList<Channel> getChannels() { return this.channels; }
+
     public long getPartDuration() {
         return this.partDuration;
     }

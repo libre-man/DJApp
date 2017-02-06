@@ -31,7 +31,7 @@ public class Logger implements SensorEventListener{
     private boolean isRunning = true;
     private Context context;
     private Server server;
-    private String client_id;
+    private int client_id;
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
@@ -46,7 +46,7 @@ public class Logger implements SensorEventListener{
         }
         this.server = server;
         SharedPreferences prefs = this.context.getSharedPreferences("sdaas", MODE_PRIVATE);
-        this.client_id = Integer.toString(prefs.getInt("client_id", -1));
+        this.client_id = prefs.getInt("client_id", -1);
     }
 
     public void setCurrentChannel(int channelIndex, int channelId) {
@@ -63,9 +63,9 @@ public class Logger implements SensorEventListener{
 
     public void intervalLogger() {
         while (this.isRunning) {
-            HashMap data = new HashMap<String, String>();
+            HashMap data = new HashMap<>();
             data.put("client_id", client_id);
-            data.put("channel_id", Integer.toString(currentChannel));
+            data.put("channel_id", channelId);
 
             this.server.logData(this.context, Encoder.encodeDataLogMessage(data));
 

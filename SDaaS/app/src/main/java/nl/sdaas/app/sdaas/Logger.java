@@ -15,6 +15,7 @@ import com.loopj.android.http.SyncHttpClient;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -26,10 +27,11 @@ public class Logger implements SensorEventListener{
     private final int AMOUNT_OF_CHANNELS;
 
     private int currentChannel = 0;
+    private int channelId = 0;
     private boolean isRunning = true;
     private Context context;
     private Server server;
-    private String client_id;
+    private int client_id;
 
     /* Accelerometer variables. */
     private Sensor accelerometer;
@@ -44,24 +46,26 @@ public class Logger implements SensorEventListener{
         }
         this.server = server;
         SharedPreferences prefs = this.context.getSharedPreferences("sdaas", MODE_PRIVATE);
-        this.client_id = Integer.toString(prefs.getInt("client_id", -1));
+        this.client_id = prefs.getInt("client_id", -1);
     }
 
-    public void setCurrentChannel(int channelIndex) {
+    public void setCurrentChannel(int channelIndex, int channelId) {
         this.currentChannel = channelIndex;
+        this.channelId = channelId;
 
         Log.d(TAG, "Channel switched: " + this.currentChannel);
     }
 
-    public void nextChannel() {
-        this.setCurrentChannel((currentChannel + 1) % AMOUNT_OF_CHANNELS);
+    public void nextChannel(ArrayList<Channel> channels) {
+        int nextChannel = (currentChannel + 1) % AMOUNT_OF_CHANNELS;
+        this.setCurrentChannel(nextChannel, channels.get(nextChannel).getChannelId());
     }
 
     public void intervalLogger() {
         while (this.isRunning) {
-            HashMap data = new HashMap<String, String>();
+            HashMap data = new HashMap<>();
             data.put("client_id", client_id);
-            data.put("channel_id", Integer.toString(currentChannel));
+            data.put("channel_id", channelId);
 
             this.server.logData(this.context, Encoder.encodeDataLogMessage(data));
 
